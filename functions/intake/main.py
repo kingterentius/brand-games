@@ -33,6 +33,8 @@ GAMES = {"brand": "See Your Brand", "voice": "Tune Your Voice"}
 def _odoo():
     env = lambda k: os.environ[k].strip()
     url = env("ODOO_URL").rstrip("/")
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
     db, user, key = env("ODOO_DB"), env("ODOO_USER"), env("ODOO_API_KEY")
     uid = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/common").authenticate(db, user, key, {})
     if not uid:
