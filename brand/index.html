@@ -5,83 +5,112 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>See Your Brand</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Baloo+2:wght@600;700&family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Archivo+Black&family=Baloo+2:wght@600;700&family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* VOICE: playful, quick, a design game you tap through in three minutes
-   IDEA: a brand board — every choice lands at once on a phone site, business card, post, tote and email
-   PICTURE: a live mockup board, the player's brand applied across five touchpoints
-   COLOUR and TYPE: white housing, near-black ink, coral accent; the board carries the player's own colors and font
-   LAYOUT: board left (large), choice card right; stacks board-over-card under 860px */
-:root{color-scheme:light dark;--bg:light-dark(#ffffff,#121218);--ink:light-dark(#16151a,#f1eff5);--soft:light-dark(#f2f1f5,#1d1c25);--line:light-dark(#dedce5,#33313f);--mute:light-dark(#5d5a68,#a8a4b6);--hot:#ff4f5e}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+/* VOICE: Terence Latimer's personal brand, a teaching workshop: clear, warm, first person
+   IDEA: a page from his notebook: a live figure on the left, the lesson and the exercise on the right
+   PICTURE: the live board, captioned FIG. like the line drawings on terencelatimer.com
+   COLOUR and TYPE: Ink and Daylight system: daylight #FFFDF8, paper #F4F0E6, ink #17150F, rust #7C2D24, copper #A44F20; Libre Caslon Display headings, Libre Caslon Text body, IBM Plex Mono labels
+   LAYOUT: brand bar, intro band, board left with the card right, closing rust call-to-action band; stacks under 900px */
+:root{color-scheme:light;--daylight:#FFFDF8;--paper:#F4F0E6;--ink:#17150F;--rust:#7C2D24;--copper:#A44F20;--mute:#5a5246;--line:#ddd5c4;--display:"Libre Caslon Display",Georgia,serif;--body:"Libre Caslon Text",Georgia,serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
-.band{padding:clamp(20px,3vw,40px) max(4vw,16px);max-width:1240px;margin:0 auto}
-header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:18px}
-h1{font:36px/1.05 'Archivo Black',Inter,sans-serif;margin:0;text-wrap:balance}
-header p{margin:0;color:var(--mute)}
-.wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
-.stage{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:600/420;box-shadow:0 18px 40px -22px rgba(20,10,40,.45)}
+body{margin:0;background:var(--daylight);color:var(--ink);font:17px/1.6 var(--body);overflow-x:clip}
+a{color:var(--rust)}
+.bar{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding:14px max(4vw,16px);border-bottom:1px solid var(--line)}
+.bar a{font:500 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--ink)}
+.bar nav{display:flex;flex-wrap:wrap;gap:6px 18px}
+.bar nav a{color:var(--mute);letter-spacing:.08em}
+.bar nav a[aria-current]{color:var(--rust)}
+.band{padding:clamp(24px,3.5vw,48px) max(4vw,16px);max-width:1240px;margin:0 auto}
+.eyebrow{font:500 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin:0 0 8px}
+header.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px 32px;align-items:end;margin-bottom:24px}
+h1{font:700 clamp(34px,4.4vw,52px)/1.05 var(--display);margin:0;text-wrap:balance}
+header.intro p.lede{margin:0;color:var(--mute);font-size:18px}
+.wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+.figure{margin:0}
+.figure figcaption{font:500 12px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:10px}
+.stage{position:relative;border:1px solid var(--ink);border-radius:4px;overflow:hidden;aspect-ratio:600/420;background:var(--paper)}
 .stage svg{display:block;width:100%;height:100%}
-#board{animation:pop .35s ease}
-@keyframes pop{from{opacity:.55}to{opacity:1}}
-.tp{transition:opacity .4s ease}
-.stamp{position:absolute;right:4%;top:5%;padding:8px 16px;border:4px solid var(--hot);color:var(--hot);font:20px 'Archivo Black',sans-serif;border-radius:10px;transform:rotate(-8deg) scale(2.4);opacity:0;background:rgba(255,255,255,.9);pointer-events:none}
+.stamp{position:absolute;right:4%;top:5%;padding:6px 14px;border:3px solid var(--rust);color:var(--rust);font:600 15px var(--mono);letter-spacing:.12em;border-radius:6px;transform:rotate(-8deg) scale(2.4);opacity:0;background:rgba(255,253,248,.92);pointer-events:none}
 .stamp.on{animation:stamp .5s cubic-bezier(.2,1.6,.4,1) forwards}
 @keyframes stamp{to{transform:rotate(-8deg) scale(1);opacity:1}}
-.card{background:var(--soft);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,2.4vw,28px)}
+.card{background:var(--paper);border-top:3px solid var(--ink);padding:clamp(18px,2.4vw,28px)}
 .dots{display:flex;gap:6px;margin-bottom:14px}
-.dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}
-.dots i.done{background:var(--hot)}
-.lvl{font-size:14px;color:var(--mute);margin:0 0 4px}
-h2{font:26px/1.1 'Archivo Black',Inter,sans-serif;margin:0 0 6px;text-wrap:balance}
+.dots i{flex:1;height:4px;background:var(--line)}
+.dots i.done{background:var(--rust)}
+.lvl{font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rust);margin:0 0 6px}
+h2{font:700 28px/1.12 var(--display);margin:0 0 6px;text-wrap:balance}
 .sub{margin:0 0 16px;color:var(--mute)}
+.lesson{margin:0 0 18px;padding:14px 16px;background:var(--daylight);border-left:3px solid var(--rust)}
+.lesson h3{font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rust);margin:0 0 6px}
+.lesson p{margin:0 0 8px;font-size:16px}
+.lesson .try{font-size:15px;color:var(--mute)}
+.lesson .src{font:400 12px/1.5 var(--mono);color:var(--mute);margin:0}
+.lesson .src a{color:var(--mute)}
+.howto{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:10px;counter-reset:n}
+.howto li{counter-increment:n;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:start}
+.howto li::before{content:counter(n);font:500 13px var(--mono);border:1px solid var(--ink);border-radius:50%;width:30px;height:30px;display:grid;place-items:center}
 .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
-.opt{font:inherit;color:inherit;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:12px 14px;min-height:64px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
-.opt:hover{border-color:var(--hot)}
-.opt.sel{border-color:var(--hot);box-shadow:0 0 0 3px color-mix(in srgb,var(--hot) 25%,transparent)}
-.opt b{font-weight:700}
+.opt{font:inherit;font-size:16px;color:inherit;text-align:left;background:var(--daylight);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-height:60px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.opt:hover{border-color:var(--rust)}
+.opt.sel{border-color:var(--rust);box-shadow:0 0 0 2px var(--rust)}
+.opt b{font-family:var(--display);font-size:18px}
 .opt small{color:var(--mute);font-size:14px;line-height:1.35}
 .opt svg{width:56px;height:56px}
-.sw{display:flex;gap:4px}.sw span{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.sw{display:flex;gap:4px}.sw span{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
 .sample{font-size:20px;line-height:1.2;overflow-wrap:anywhere}
-input[type=text]{width:100%;font:16px Inter,sans-serif;padding:13px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
-input[type=text]:focus{outline:none;border-color:var(--hot)}
-.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
-.btn{font:600 16px Inter,sans-serif;min-height:46px;padding:0 20px;border-radius:999px;border:0;background:var(--hot);color:#fff;cursor:pointer}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
-.btn:focus-visible,.opt:focus-visible,.chip:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+input[type=text],textarea{width:100%;font:16px/1.4 var(--body);padding:12px 14px;border-radius:6px;border:1px solid var(--ink);background:var(--daylight);color:var(--ink)}
+textarea{resize:vertical;min-height:80px}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--rust);outline-offset:1px}
+.starters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.starters button{font:15px var(--body);min-height:40px;padding:6px 12px;border-radius:6px;border:1px dashed var(--copper);background:transparent;color:var(--ink);cursor:pointer;text-align:left}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
+.btn{font:500 14px var(--mono);letter-spacing:.08em;text-transform:uppercase;min-height:46px;padding:0 22px;border-radius:10rem;border:0;background:var(--rust);color:var(--daylight);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{font:600 15px Inter,sans-serif;min-height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
-.chip.sel{background:var(--hot);border-color:var(--hot);color:#fff}
-.toast{margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--bg);border:2px dashed var(--hot)}
-.toast b{color:var(--hot)}
-.hexes{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px;font-size:14px}
+.chip{font:16px var(--body);min-height:44px;padding:0 16px;border-radius:10rem;border:1px solid var(--ink);background:var(--daylight);color:var(--ink);cursor:pointer}
+.chip.sel{background:var(--rust);border-color:var(--rust);color:var(--daylight)}
+.chip.no.sel{background:var(--ink);border-color:var(--ink)}
+.count{font:400 13px var(--mono);color:var(--mute);margin-top:8px}
+.toast{margin-top:16px;padding:12px 14px;background:var(--daylight);border:1px dashed var(--rust)}
+.toast b{color:var(--rust)}
+.hexes{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px;font:400 13px var(--mono)}
 .hexes span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.hexes i{width:16px;height:16px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
-.result h2{font-size:32px}
-.bc{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;display:grid;gap:12px}
-.bc h3{margin:0 0 2px;font-size:14px;color:var(--mute);font-weight:600}
-.plots{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:2px;font-size:15px}
-.note{font-size:13px;color:var(--mute);margin:10px 0 0}
-@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}h1{font-size:30px}}
-@media(prefers-reduced-motion:reduce){#board{animation:none}.stamp.on{animation:none;opacity:1;transform:rotate(-8deg)}}
+.hexes i{width:16px;height:16px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.2)}
+.result h2{font-size:34px}
+.bc{background:var(--daylight);border:1px solid var(--line);padding:16px;margin:14px 0;display:grid;gap:12px}
+.bc h3{margin:0 0 2px;font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.plots{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:2px;font-size:16px}
+.note{font:400 13px/1.5 var(--mono);color:var(--mute);margin:10px 0 0}
+.close{background:var(--rust);color:var(--daylight);margin-top:48px}
+.close .band{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between}
+.close h2{color:var(--daylight);font-size:clamp(26px,3vw,36px);max-width:22ch}
+.close .eyebrow{color:#f1d9c8}
+.close a.btn{background:var(--daylight);color:var(--rust);display:inline-flex;align-items:center;text-decoration:none}
+.close p.small{font:400 13px var(--mono);margin:12px 0 0;color:#f1d9c8}
+.close p.small a{color:var(--daylight)}
+@media(max-width:900px){.wrap,header.intro{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.stamp.on{animation:none;opacity:1;transform:rotate(-8deg)}}
 </style>
 </head>
 <body>
+<div class="bar"><a href="https://www.terencelatimer.com">Terence Latimer</a><nav aria-label="Workshop parts"><a href="https://brand.terencelatimer.com" aria-current="page">1 · See your brand</a><a href="https://voice.terencelatimer.com">2 · Tune your voice</a></nav></div>
 <main class="band">
-  <header>
-    <h1>See your brand</h1>
-    <p>Seven quick choices. Watch your brand come to life everywhere it shows up.</p>
+  <header class="intro">
+    <div><p class="eyebrow">Brand workshop · Part 1 of 2</p><h1>See your brand, everywhere it shows up</h1></div>
+    <p class="lede">A short workshop in seven moves. Each choice teaches one piece of a brand guide, and you watch it land on a website, a business card, a post, a tote and an email. You leave with your own one-page guide.</p>
   </header>
   <div class="wrap">
-    <div class="stage">
+    <figure class="figure"><div class="stage">
       <svg id="scene" viewBox="0 0 600 420" role="img" aria-label="Your brand applied to a website, business card, social post, tote bag and email"><g id="board"></g></svg>
       <div class="stamp" id="stamp">BRAND READY</div>
-    </div>
+    </div><figcaption>Fig. 1 — Your brand, applied to five places. Each choice updates every piece at once.</figcaption></figure>
     <section class="card" id="panel" aria-live="polite"></section>
   </div>
 </main>
+<section class="close"><div class="band"><div><p class="eyebrow">Work with me</p><h2>Want your card turned into a full brand guide?</h2><p class="small">I'm Terence Latimer. I build systems that speak, and write the words that make them work.</p></div><a class="btn" href="https://www.terencelatimer.com">Visit terencelatimer.com</a></div></section>
 <script>
 {
 const $=s=>document.querySelector(s);
@@ -127,8 +156,22 @@ const STEPS=[
   {k:'voice',type:'pick',lvl:'Voice',q:'Which line sounds like you?',s:'This becomes your tagline.',o:VOICES},
   {k:'style',type:'pick',lvl:'Style',q:'What is your visual style?',s:'The texture behind everything.',o:STYLES},
   {k:'tp',type:'multi',lvl:'Touchpoints',q:'Where will people see your brand?',s:'Tap each place your brand shows up. Watch it light up.'}];
+const SRC={
+  guide:['Inc., on the Lucidpress (now Marq) State of Brand Consistency study','https://www.inc.com/tracy-leigh-hazzard/boost-profit-with-constant-brand-consistency.html'],
+  wcag:['W3C, Understanding WCAG 1.4.3: Contrast (Minimum)','https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html'],
+  type:['Google Fonts Knowledge, Pairing typefaces','https://fonts.google.com/knowledge/choosing_type/pairing_typefaces']};
+const src=k=>`<p class="src">Source: <a href="${SRC[k][1]}" target="_blank" rel="noopener">${SRC[k][0]}</a></p>`;
+const LESSONS={
+  name:{t:'Lesson 1 · Your name does a lot of jobs',p:'Your name has to fit on a sign, a business card, an email address and a social handle. Watch the board: if it gets cramped anywhere, plan a short version too.',y:'Try this: say it out loud, then check that the matching handle and web address are free.'},
+  pal:{t:'Lesson 2 · Give each color one job',p:'A palette works when each color has a role: a main color people remember, a dark color for text, an accent for buttons, and a light color for backgrounds. Text also needs enough contrast to read. The web accessibility standard asks for a contrast ratio of at least 4.5 to 1 for normal text.',y:'Try this: put a paragraph in your dark color on your light color. If you squint and it fades, it is too faint.',s:'wcag'},
+  font:{t:'Lesson 3 · One voice for headlines, one for reading',p:'Most brands use one typeface with personality for headlines and one easy-reading face for everything else. Pick faces that are different enough to tell apart but don\'t compete. When in doubt, pair a serif with a sans serif.',y:'Try this: look at your name on the business card. If it is hard to read small, save that typeface for big headlines only.',s:'type'},
+  logo:{t:'Lesson 4 · A mark must work tiny',p:'Your logo shows up as a big sign and as a dot in the corner of a post. Look at the small version on the social post: if you can\'t tell what it is, simplify it.',y:'Try this: shrink your logo to the size of a thumbnail. Keep it only if it still reads.'},
+  voice:{t:'Lesson 5 · A tagline is a short promise',p:'A tagline tells people what it feels like to deal with you, in under ten words. Use the same line everywhere, so people learn it.',y:'Want to go deeper? Part 2 of this workshop, Tune Your Voice, turns this line into a full voice.'},
+  style:{t:'Lesson 6 · Consistency is the point',p:'Choose one visual style and use it everywhere. In the Lucidpress (now Marq) study of brand managers, managers estimated that always presenting their brand consistently would raise revenue by about 23 percent on average, and companies with enforced written guidelines were more than twice as likely to look consistent.',y:'Try this: open your last five posts side by side. Do they look like they came from one place?',s:'guide'},
+  tp:{t:'Lesson 7 · A guide only works where you use it',p:'List every place people meet your brand. The places you don\'t pick here are where your brand is missing or drifting, and they become your to-do list.',y:'Try this: write the owner next to each place, even if it is just you.'}};
+function lessonHTML(k){const l=LESSONS[k];if(!l)return '';return `<aside class="lesson"><h3>${l.t}</h3><p>${l.p}</p><p class="try">${l.y}</p>${l.s?src(l.s):''}</aside>`}
 const S={name:'',pal:null,font:null,logo:null,voice:null,style:null,tp:[],bonus:false};
-let i=0;
+let i=-1;
 const find=(a,id)=>a.find(x=>x.id===id);
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const nm=()=>(S.name||'').trim()||'Your Brand';
@@ -219,9 +262,16 @@ function bonusHTML(){const p=find(PALS,S.pal);if(!p)return '';
 
 function render(){
   board();
+  if(i<0){
+    panel.innerHTML=`<p class="lvl">How this works</p><h2>Build a brand guide by playing</h2><p class="sub">A brand guide is the rulebook that keeps your name, colors, type and voice the same everywhere people meet you. You'll build yours in seven moves.</p>
+    <ol class="howto"><li><span>Each level teaches one piece of a brand guide in a short lesson.</span></li><li><span>Make your choice and watch it land on the board.</span></li><li><span>At the end you get your brand personality and a one-page guide to keep.</span></li></ol>
+    <aside class="lesson"><h3>Why it matters</h3><p>In the Lucidpress (now Marq) study of brand managers, companies with written, enforced brand guidelines were more than twice as likely to present their brand consistently.</p>${src('guide')}</aside>
+    <div class="row"><button class="btn" id="go" type="button">Start the workshop</button></div>`;
+    $('#go').addEventListener('click',()=>{i=0;render()});return;
+  }
   const stp=STEPS[i];
-  const back=i>0?`<button class="btn ghost" id="back" type="button">Back</button>`:'';
-  let h=`<div class="dots">${STEPS.map((_,n)=>`<i class="${n<=i?'done':''}"></i>`).join('')}</div><p class="lvl">Level ${i+1} of 7 · ${stp.lvl}</p><h2>${stp.q}</h2><p class="sub">${stp.s}</p>`;
+  const back=i>=0?`<button class="btn ghost" id="back" type="button">Back</button>`:'';
+  let h=`<div class="dots">${STEPS.map((_,n)=>`<i class="${n<=i?'done':''}"></i>`).join('')}</div><p class="lvl">Level ${i+1} of 7 · ${stp.lvl}</p><h2>${stp.q}</h2><p class="sub">${stp.s}</p>`+lessonHTML(stp.k);
   if(stp.type==='text')h+=`<label for="nm" class="lvl">Brand name</label><input id="nm" type="text" maxlength="28" autocomplete="off" placeholder="e.g. Black Cactus" value="${esc(S.name)}"><div class="row">${back}<button class="btn" id="go" type="button">Start designing</button></div>`;
   else if(stp.type==='pick'){h+=`<div class="opts">${stp.o.map(o=>optHTML(stp,o)).join('')}</div>`;if(stp.k==='pal'&&S.bonus)h+=bonusHTML();h+=`<div class="row">${back}${S[stp.k]?'<button class="btn" id="go" type="button">Next</button>':''}</div>`}
   else h+=`<div class="chips">${TPS.map(t=>`<button type="button" class="chip${S.tp.includes(t)?' sel':''}" aria-pressed="${S.tp.includes(t)}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div><div class="row">${back}<button class="btn" id="go" type="button">Reveal my brand</button></div>`;
@@ -233,7 +283,7 @@ function render(){
   const bk=$('#back');if(bk)bk.addEventListener('click',()=>{i--;S.done=false;render()});
 }
 let timer;
-function pick(stp,id){S[stp.k]=id;if(stp.k==='pal'&&!S.bonus){S.bonus=true;render();return}render();clearTimeout(timer);timer=setTimeout(()=>{if(STEPS[i]===stp)next()},700)}
+function pick(stp,id){S[stp.k]=id;if(stp.k==='pal'&&!S.bonus){S.bonus=true;render();return}render()}
 function next(){clearTimeout(timer);if(i<STEPS.length-1){i++;render()}else reveal()}
 
 function reveal(){
@@ -247,10 +297,10 @@ function reveal(){
     <div><h3>Look</h3>${esc(L.b)} logo with a ${esc(st.b.toLowerCase())} style</div>
     <div><h3>Shows up in ${S.tp.length} of 5 places</h3><ul class="plots">${TPS.map(t=>`<li>${S.tp.includes(t)?'✓':'○'} ${esc(t)}${S.tp.includes(t)?'':' (not yet)'}</li>`).join('')}</ul></div>
   </div>
-  <div class="row"><button class="btn" id="copy" type="button">Copy my brand card</button><button class="btn ghost" id="again" type="button">Play again</button></div>
-  <p class="note" id="cmsg">Prototype. In the live version this card is emailed to the player and their answers land in Odoo as a lead.</p></div>`;
+  <h3 class="lvl" style="margin-top:6px">What to do with this</h3><ol class="howto"><li><span>Copy your card and keep it where you make things: your design tool, your notes, your website settings.</span></li><li><span>Set your colors and fonts up once in the tools you use, so you never pick them by eye again.</span></li><li><span>Fix the places marked "not yet", one at a time. Then take Part 2, <a href="https://voice.terencelatimer.com">Tune Your Voice</a>.</span></li></ol><div class="row"><button class="btn" id="copy" type="button">Copy my brand card</button><button class="btn ghost" id="again" type="button">Play again</button></div>
+  <p class="note" id="cmsg">Your answers stay in this browser. Nothing is sent anywhere yet.</p></div>`;
   const s=$('#stamp');s.classList.remove('on');void s.offsetWidth;s.classList.add('on');
-  $('#again').addEventListener('click',()=>{Object.assign(S,{name:'',pal:null,font:null,logo:null,voice:null,style:null,tp:[],bonus:false,done:false});i=0;s.classList.remove('on');render()});
+  $('#again').addEventListener('click',()=>{Object.assign(S,{name:'',pal:null,font:null,logo:null,voice:null,style:null,tp:[],bonus:false,done:false});i=-1;s.classList.remove('on');render()});
   $('#copy').addEventListener('click',()=>{
     const t=`${nm()}: ${a.n}\nColors: ${p.c.map((c,n)=>roles[n]+' '+c).join(', ')}\nType: ${F.fn}\nTagline: "${v.t}" (${v.b} voice)\nLogo: ${L.b}, ${st.b} style\nShows up in: ${S.tp.join(', ')||'nowhere yet'}`;
     navigator.clipboard.writeText(t).then(()=>$('#cmsg').textContent='Copied to your clipboard.').catch(()=>$('#cmsg').textContent='Your browser blocked copying here. Select the card text above instead.');
