@@ -31,9 +31,12 @@ GAMES = {"brand": "See Your Brand", "voice": "Tune Your Voice"}
 
 
 def _odoo():
-    url = os.environ["ODOO_URL"].rstrip("/")
-    db, user, key = os.environ["ODOO_DB"], os.environ["ODOO_USER"], os.environ["ODOO_API_KEY"]
+    env = lambda k: os.environ[k].strip()
+    url = env("ODOO_URL").rstrip("/")
+    db, user, key = env("ODOO_DB"), env("ODOO_USER"), env("ODOO_API_KEY")
     uid = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/common").authenticate(db, user, key, {})
+    if not uid:
+        raise RuntimeError("Odoo authentication failed")
     models = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/object", allow_none=True)
 
     def call(model, method, *args, **kw):
@@ -102,7 +105,8 @@ def intake(request):
     if request.method == "GET":
         try:
             lead = _find_by_code(_odoo(), request.args.get("for", ""))
-        except Exception:
+        except Exception as exc:
+            print(f"lookup error: {exc!r}")
             return _reply({"error": "lookup"}, 502, origin)
         if not lead:
             return _reply({}, 404, origin)
