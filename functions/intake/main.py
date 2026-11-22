@@ -20,6 +20,8 @@ ALLOWED = {
     "https://voice.terencelatimer.com",
     "https://terencelatimer-brand.web.app",
     "https://terencelatimer-voice.web.app",
+    "https://flow.terencelatimer.com",
+    "https://terencelatimer-flow.web.app",
 }
 TEAM_ID = 12        # Latimer Digital
 OWNER_ID = 2        # Terence
@@ -27,7 +29,7 @@ STAGE_QUALIFIED = 2
 EARLY_STAGES = {1, 12}  # New, Contacted
 CODE_RE = re.compile(r"^[A-Za-z0-9_-]{6,40}$")
 EMAIL_RE = re.compile(r"^[^@\s]{1,64}@[^@\s]{1,190}\.[A-Za-z]{2,}$")
-GAMES = {"brand": "See Your Brand", "voice": "Tune Your Voice"}
+GAMES = {"brand": "See Your Brand", "voice": "Tune Your Voice", "flow": "Map Your Flow"}
 
 
 def _odoo():

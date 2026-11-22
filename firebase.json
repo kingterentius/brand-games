@@ -1,6 +1,28 @@
 {
   "hosting": [
-    { "target": "brand", "public": "brand", "ignore": ["firebase.json", "**/.*"] },
-    { "target": "voice", "public": "voice", "ignore": ["firebase.json", "**/.*"] }
+    {
+      "target": "brand",
+      "public": "brand",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ]
+    },
+    {
+      "target": "voice",
+      "public": "voice",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ]
+    },
+    {
+      "target": "flow",
+      "public": "flow",
+      "ignore": [
+        "firebase.json",
+        "**/.*"
+      ]
+    }
   ]
 }

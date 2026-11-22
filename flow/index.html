@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Map Your Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* VOICE: Terence Latimer's personal brand, a teaching workshop: clear, warm, first person
+   IDEA: a page from his notebook: a live figure on the left, the lesson and the exercise on the right
+   PICTURE: the live board, captioned FIG. like the line drawings on terencelatimer.com
+   COLOUR and TYPE: Ink and Daylight system: daylight #FFFDF8, paper #F4F0E6, ink #17150F, rust #7C2D24, copper #A44F20; Libre Caslon Display headings, Libre Caslon Text body, IBM Plex Mono labels
+   LAYOUT: brand bar, intro band, board left with the card right, closing rust call-to-action band; stacks under 900px */
+:root{color-scheme:light;--daylight:#FFFDF8;--paper:#F4F0E6;--ink:#17150F;--rust:#7C2D24;--copper:#A44F20;--mute:#5a5246;--line:#ddd5c4;--display:"Libre Caslon Display",Georgia,serif;--body:"Libre Caslon Text",Georgia,serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--daylight);color:var(--ink);font:17px/1.6 var(--body);overflow-x:clip}
+a{color:var(--rust)}
+.bar{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between;padding:14px max(4vw,16px);border-bottom:1px solid var(--line)}
+.bar a{font:500 13px var(--mono);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--ink)}
+.bar nav{display:flex;flex-wrap:wrap;gap:6px 18px}
+.bar nav a{color:var(--mute);letter-spacing:.08em}
+.bar nav a[aria-current]{color:var(--rust)}
+.band{padding:clamp(24px,3.5vw,48px) max(4vw,16px);max-width:1240px;margin:0 auto}
+.eyebrow{font:500 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--rust);margin:0 0 8px}
+header.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px 32px;align-items:end;margin-bottom:24px}
+h1{font:700 clamp(34px,4.4vw,52px)/1.05 var(--display);margin:0;text-wrap:balance}
+header.intro p.lede{margin:0;color:var(--mute);font-size:18px}
+.wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}
+.figure{margin:0}
+.figure figcaption{font:500 12px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:10px}
+.stage{position:relative;border:1px solid var(--ink);border-radius:4px;overflow:hidden;aspect-ratio:600/420;background:var(--paper)}
+.stage svg{display:block;width:100%;height:100%}
+.stamp{position:absolute;right:4%;top:5%;padding:6px 14px;border:3px solid var(--rust);color:var(--rust);font:600 15px var(--mono);letter-spacing:.12em;border-radius:6px;transform:rotate(-8deg) scale(2.4);opacity:0;background:rgba(255,253,248,.92);pointer-events:none}
+.stamp.on{animation:stamp .5s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes stamp{to{transform:rotate(-8deg) scale(1);opacity:1}}
+.card{background:var(--paper);border-top:3px solid var(--ink);padding:clamp(18px,2.4vw,28px)}
+.dots{display:flex;gap:6px;margin-bottom:14px}
+.dots i{flex:1;height:4px;background:var(--line)}
+.dots i.done{background:var(--rust)}
+.lvl{font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rust);margin:0 0 6px}
+h2{font:700 28px/1.12 var(--display);margin:0 0 6px;text-wrap:balance}
+.sub{margin:0 0 16px;color:var(--mute)}
+.lesson{margin:0 0 18px;padding:14px 16px;background:var(--daylight);border-left:3px solid var(--rust)}
+.lesson h3{font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--rust);margin:0 0 6px}
+.lesson p{margin:0 0 8px;font-size:16px}
+.lesson .try{font-size:15px;color:var(--mute)}
+.lesson .src{font:400 12px/1.5 var(--mono);color:var(--mute);margin:0}
+.lesson .src a{color:var(--mute)}
+.howto{list-style:none;padding:0;margin:0 0 16px;display:grid;gap:10px;counter-reset:n}
+.howto li{counter-increment:n;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:start}
+.howto li::before{content:counter(n);font:500 13px var(--mono);border:1px solid var(--ink);border-radius:50%;width:30px;height:30px;display:grid;place-items:center}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+.opt{font:inherit;font-size:16px;color:inherit;text-align:left;background:var(--daylight);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-height:60px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.opt:hover{border-color:var(--rust)}
+.opt.sel{border-color:var(--rust);box-shadow:0 0 0 2px var(--rust)}
+.opt b{font-family:var(--display);font-size:18px}
+.opt small{color:var(--mute);font-size:14px;line-height:1.35}
+.opt svg{width:56px;height:56px}
+.sw{display:flex;gap:4px}.sw span{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.sample{font-size:20px;line-height:1.2;overflow-wrap:anywhere}
+input[type=text],textarea{width:100%;font:16px/1.4 var(--body);padding:12px 14px;border-radius:6px;border:1px solid var(--ink);background:var(--daylight);color:var(--ink)}
+textarea{resize:vertical;min-height:80px}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--rust);outline-offset:1px}
+.starters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.starters button{font:15px var(--body);min-height:40px;padding:6px 12px;border-radius:6px;border:1px dashed var(--copper);background:transparent;color:var(--ink);cursor:pointer;text-align:left}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;align-items:center}
+.btn{font:500 14px var(--mono);letter-spacing:.08em;text-transform:uppercase;min-height:46px;padding:0 22px;border-radius:10rem;border:0;background:var(--rust);color:var(--daylight);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--copper);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:16px var(--body);min-height:44px;padding:0 16px;border-radius:10rem;border:1px solid var(--ink);background:var(--daylight);color:var(--ink);cursor:pointer}
+.chip.sel{background:var(--rust);border-color:var(--rust);color:var(--daylight)}
+.chip.no.sel{background:var(--ink);border-color:var(--ink)}
+.count{font:400 13px var(--mono);color:var(--mute);margin-top:8px}
+.toast{margin-top:16px;padding:12px 14px;background:var(--daylight);border:1px dashed var(--rust)}
+.toast b{color:var(--rust)}
+.hexes{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px;font:400 13px var(--mono)}
+.hexes span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.hexes i{width:16px;height:16px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.2)}
+.result h2{font-size:34px}
+.bc{background:var(--daylight);border:1px solid var(--line);padding:16px;margin:14px 0;display:grid;gap:12px}
+.bc h3{margin:0 0 2px;font:500 12px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.plots{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:2px;font-size:16px}
+.note{font:400 13px/1.5 var(--mono);color:var(--mute);margin:10px 0 0}
+.close{background:var(--rust);color:var(--daylight);margin-top:48px}
+.close .band{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between}
+.close h2{color:var(--daylight);font-size:clamp(26px,3vw,36px);max-width:22ch}
+.close .eyebrow{color:#f1d9c8}
+.close a.btn{background:var(--daylight);color:var(--rust);display:inline-flex;align-items:center;text-decoration:none}
+.close p.small{font:400 13px var(--mono);margin:12px 0 0;color:#f1d9c8}
+.close p.small a{color:var(--daylight)}
+@media(max-width:900px){.wrap,header.intro{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.stamp.on{animation:none;opacity:1;transform:rotate(-8deg)}}
+.board{background:var(--paper);border:1px solid var(--ink);border-radius:4px;padding:16px}
+.top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.words span{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:10rem;background:var(--ink);color:var(--daylight)}
+.words em{font-style:italic;font-size:14px;color:var(--mute)}
+.meter{flex:1 1 220px;max-width:320px}
+.meter .lab{display:flex;justify-content:space-between;font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.meter .lab b{color:var(--ink);font-size:14px}
+.mbar{height:10px;background:var(--line);overflow:hidden;margin-top:4px}
+.mbar i{display:block;height:100%;background:#2f6b4f;transition:width .5s ease,background .5s}
+.regs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.reg{background:var(--daylight);border:1px solid var(--line);border-radius:4px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.reg.home{border:2px solid var(--rust)}
+.reg.lost{border:2px dashed var(--copper)}
+.reg h3{margin:0;font:700 18px var(--display);display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.reg h3 small{font:400 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.reg p{margin:0;font-size:15px;line-height:1.5}
+.reg .flag{font:500 12px var(--mono);color:var(--copper);text-transform:uppercase;letter-spacing:.06em}
+.tag{font:500 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--daylight);background:var(--rust);border-radius:10rem;padding:2px 8px;white-space:nowrap}
+.dial{margin-bottom:14px}
+.dial .ends{display:flex;justify-content:space-between;font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.dial .ends span.on{color:var(--rust)}
+input[type=range]{width:100%;accent-color:var(--rust);height:32px}
+.prof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.prof div{background:var(--paper);padding:8px 10px;font-size:14px}
+.prof b{display:block;font:700 18px var(--display)}
+@media(max-width:520px){.regs{grid-template-columns:minmax(0,1fr)}.reg{min-height:0}}
+@media(prefers-reduced-motion:reduce){.mbar i{transition:none}}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+input[type=email],input[type=tel],input[type=url]{width:100%;font:16px/1.4 var(--body);padding:12px 14px;border-radius:6px;border:1px solid var(--ink);background:var(--daylight);color:var(--ink)}
+input[type=email]:focus,input[type=tel]:focus,input[type=url]:focus{outline:2px solid var(--rust);outline-offset:1px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:16px;cursor:pointer}
+.consent input{width:20px;height:20px;margin-top:3px;accent-color:var(--rust)}
+.err{color:var(--rust);font:500 14px var(--mono);margin:8px 0 0;min-height:1em}
+.linkish{background:none;border:0;padding:0;font:inherit;color:var(--mute);text-decoration:underline;cursor:pointer;min-height:44px}
+header.intro{align-items:center}
+.hero-fig{margin:0}.hero-fig svg{display:block;width:100%;height:auto;max-height:260px}
+.hero-fig figcaption{font:500 12px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-top:6px}
+header.intro .lede{margin-top:12px}
+.lhead{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;align-items:start}
+.lhead .ico{color:var(--rust);margin-top:2px}
+.lesson .take{margin:2px 0 0;font:700 18px/1.3 var(--display)}
+.lesson details{margin-top:8px}
+.lesson summary{cursor:pointer;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);min-height:32px;display:flex;align-items:center}
+.lesson details p{margin:8px 0 0}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:4px 0 16px}
+.steps div{background:var(--daylight);border:1px solid var(--line);padding:14px 10px;display:grid;justify-items:center;gap:8px;text-align:center;font-size:15px;line-height:1.3}
+.steps .ico{color:var(--rust)}
+.stage .stamp{font-size:14px;top:auto;bottom:6%;right:4%}
+.chip{font-size:15px}
+</style>
+</head>
+<body>
+<div class="bar"><a href="https://www.terencelatimer.com">Terence Latimer</a><nav aria-label="Workshop parts"><a href="https://brand.terencelatimer.com">1 · See your brand</a><a href="https://voice.terencelatimer.com">2 · Tune your voice</a><a href="https://flow.terencelatimer.com" aria-current="page">3 · Map your flow</a></nav></div>
+<main class="band">
+  <header class="intro">
+    <div><p class="eyebrow">Brand workshop · Part 3 of 3</p><h1>Map your flow, find the leaks</h1><p class="lede">Seven quick moves. Draw how work finds you, pays you and comes back.</p></div>
+    <figure class="hero-fig"><svg viewBox="0 0 420 240" role="img" aria-label="Line drawing: envelopes travel through a pipe from left to right and come out as a coin; one joint in the middle drips">
+<g fill="none" stroke="#17150F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M30 92 H190 M30 132 H190" /><path d="M230 92 H362 M230 132 H362"/>
+<rect x="186" y="84" width="48" height="56" rx="4" fill="#F4F0E6"/>
+<path d="M198 140 L204 150 L210 141 L216 152 L222 140" stroke="#7C2D24"/>
+<path d="M210 162 q-4 8 0 11 q4 -3 0 -11 Z M196 180 q-3 6 0 8 q3 -2 0 -8 Z M224 186 q-3 6 0 8 q3 -2 0 -8 Z" fill="#7C2D24" stroke="#7C2D24"/>
+<path d="M118 92 V84 H128 V92 M118 132 V140 H128 V132 M290 92 V84 H300 V92 M290 132 V140 H300 V132"/>
+<g fill="#FFFDF8"><rect x="50" y="100" width="34" height="24" rx="2"/><path d="M50 100 L67 114 L84 100"/></g>
+<g fill="#FFFDF8"><rect x="140" y="102" width="30" height="20" rx="2"/><path d="M140 102 L155 113 L170 102"/></g>
+<rect x="246" y="102" width="30" height="20" rx="2" fill="#FFFDF8"/><path d="M246 102 L261 113 L276 102"/>
+<path d="M362 84 V140"/><circle cx="392" cy="112" r="17" fill="#F4F0E6"/><path d="M392 102 V122 M386 106 Q392 102 397 106 Q398 112 392 112 Q386 112 387 118 Q392 122 398 118"/>
+<path d="M40 190 Q120 170 200 196 T380 186" stroke="#A44F20" stroke-dasharray="2 6"/>
+</g>
+<g font-family="'IBM Plex Mono',monospace" font-size="10.5" letter-spacing="1" fill="#5a5246"><text x="30" y="62">INQUIRIES IN</text><text x="300" y="62">PAID WORK OUT</text><text x="172" y="222" fill="#7C2D24">THE LEAK</text></g>
+</svg><figcaption>Fig. 1 — Every business is a flow. Find the leaks.</figcaption></figure>
+  </header>
+  <div class="wrap">
+    <figure class="figure"><div class="stage"><svg id="scene" viewBox="0 0 600 420" role="img" aria-label="Your business flow: six stations from being found to repeat work"><g id="board"></g></svg><div class="stamp" id="stamp">FLOW MAPPED</div></div><figcaption>Fig. 2 — Your flow, station by station. Cracks mark the leaks.</figcaption></figure>
+    <section class="card" id="panel" aria-live="polite"></section>
+  </div>
+</main>
+<section class="close"><div class="band"><div><p class="eyebrow">Work with me</p><h2>Want help fixing the leaks?</h2><p class="small">I'm Terence Latimer. I build systems that speak, and write the words that make them work.</p></div><a class="btn" href="https://www.terencelatimer.com">Visit terencelatimer.com</a></div></section>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const panel=$('#panel'),boardEl=$('#board');
+const ICON={
+ name:'<path d="M4 12 L12 4 H20 V12 L12 20 Z"/><circle cx="16" cy="8" r="1.6"/>',
+ pal:'<path d="M12 3 C6 3 3 8 3 12 C3 17 7 20 11 20 C13 20 13 18 12 17 C11 15 13 14 15 14 H17 C20 14 21 12 21 10 C21 6 17 3 12 3 Z"/><circle cx="8" cy="10" r="1.3"/><circle cx="12" cy="7" r="1.3"/><circle cx="16" cy="9" r="1.3"/>',
+ font:'<path d="M3 19 L8 5 L13 19 M5 14 H11"/><path d="M20 19 V13 C20 11 18 10 16.5 10.5 M20 15 C17 15 15 15.5 15 17.3 C15 19.5 18.5 19.5 20 17"/>',
+ logo:'<path d="M12 3 Q13 11 21 12 Q13 13 12 21 Q11 13 3 12 Q11 11 12 3 Z"/>',
+ voice:'<path d="M5 8 Q5 5 8 5 V8 H5 V12 Q5 14 7 15 M13 8 Q13 5 16 5 V8 H13 V12 Q13 14 15 15"/>',
+ style:'<path d="M3 15 Q6 9 9 15 T15 15 T21 15"/><path d="M3 9 Q6 3 9 9" opacity=".5"/>',
+ tp:'<path d="M12 21 C12 21 5 14 5 9 A7 7 0 0 1 19 9 C19 14 12 21 12 21 Z"/><circle cx="12" cy="9" r="2.5"/>',
+ core:'<path d="M7 3 H17 V21 L12 17 L7 21 Z"/>',
+ words:'<circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>',
+ anti:'<circle cx="12" cy="12" r="8"/><path d="M6.5 17.5 L17.5 6.5"/>',
+ dials:'<circle cx="12" cy="13" r="7"/><path d="M12 13 L15.5 8.5"/><path d="M4 6 L6 8 M20 6 L18 8 M12 3 V5"/>',
+ home:'<path d="M4 11 L12 4 L20 11 V20 H4 Z"/><path d="M10 20 V14 H14 V20"/>',
+ listen:'<path d="M3 5 H15 V13 H8 L5 16 V13 H3 Z"/><path d="M17 9 H21 V17 H19 V20 L16 17 H11 V15"/>',
+ step1:'<path d="M4 20 L4 15 L15 4 L20 9 L9 20 Z"/><path d="M13 6 L18 11"/>',
+ step2:'<rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21 H16 M12 17 V21"/><path d="M7 13 L10 9 L13 12 L17 7"/>',
+ step3:'<path d="M5 3 H15 L19 7 V21 H5 Z"/><path d="M15 3 V7 H19"/><path d="M8 12 H16 M8 16 H14"/>'};
+const ico=(k,s=28)=>`<svg class="ico" viewBox="0 0 24 24" width="${s}" height="${s}" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICON[k]||''}</svg>`;
+Object.assign(ICON,{
+ found:'<circle cx="11" cy="11" r="6"/><path d="M16 16 L21 21"/>',
+ reach:'<rect x="3" y="6" width="18" height="13" rx="1.5"/><path d="M3 7 L12 13 L21 7"/>',
+ agree:'<path d="M3 13 L7 9 L11 12 L14 9 L21 15"/><path d="M8 16 L10 18 M11 15 L13 17"/>',
+ paid:'<circle cx="12" cy="12" r="8"/><path d="M12 7 V17 M9 9.5 Q12 7.5 15 9.5 Q15 12 12 12 Q9 12 9 14.5 Q12 16.5 15 14.5"/>',
+ delivered:'<path d="M3 8 L12 4 L21 8 V17 L12 21 L3 17 Z"/><path d="M3 8 L12 12 L21 8 M12 12 V21"/>',
+ back:'<path d="M4 12 A8 8 0 1 0 7 6"/><path d="M4 4 V8 H8"/>',
+ week:'<circle cx="12" cy="12" r="8"/><path d="M12 7 V12 L15 14"/>'});
+const STATIONS=[
+ {k:'found',n:'Found me',q:'How do people find you?',s:'Tap every way new people discover your work.',tools:['Instagram','TikTok','Website','Word of mouth','Shows and markets','Galleries','Google search','Linktree','Press or features']},
+ {k:'reach',n:'Reached out',q:'How do they reach you?',s:'Tap every way an inquiry arrives.',tools:['Instagram DMs','Email','Text','Phone call','Website form','In person','Linktree link']},
+ {k:'agree',n:'Agreed',q:'How do you agree on the work?',s:'Tap how scope and price get settled.',tools:['We talk it through','Written quote','Email summary','Signed contract','Deposit request','Nothing written down']},
+ {k:'paid',n:'Paid',q:'How do you get paid?',s:'Tap every way money reaches you.',tools:['Cash','Venmo','Cash App','Zelle','PayPal','Square','Stripe','Sent invoices']},
+ {k:'delivered',n:'Delivered',q:'How do you deliver and keep track?',s:'Tap how the work gets done and remembered.',tools:['Hand it over in person','Shipping','Digital files','Install on site','Spreadsheet','Notebook','Calendar','It\'s in my head']},
+ {k:'back',n:'Came back',q:'How do clients come back or send others?',s:'Tap what you do after the work is done.',tools:['Thank-you note','Follow-up message','Email list','Social posts','Ask for referrals','Ask for reviews','Nothing yet']}];
+const HEALTH=[{id:'smooth',b:'Smooth',d:'Works without me chasing it'},{id:'slow',b:'Slow',d:'Works, but takes time or reminders'},{id:'leak',b:'Things get lost',d:'People or money slip through'}];
+const SHORT={found:'Know which door brings the most people in.',reach:'Every inquiry should land in one place you check.',agree:'Put the agreement in writing, even a short email.',paid:'Make paying you the easiest step.',delivered:'Keep one record per client.',back:'Past clients are your warmest leads.',week:'Name what the current setup costs you.'};
+const LESSONS={
+ found:{t:'Lesson 1 · Being found',p:'Most people check a few places before they reach out. You don\'t need to be everywhere, but you should know which door actually brings work in, so your time goes there.',y:'Try this: ask your last five clients how they first found you.'},
+ reach:{t:'Lesson 2 · One inbox',p:'Inquiries scattered across DMs, texts and email are the most common leak in a small creative business. The fix is not fewer channels; it is one place where every inquiry gets copied and answered.',y:'Try this: count how many places you would have to check to find every inquiry from the last month.'},
+ agree:{t:'Lesson 3 · Write it down',p:'A short written summary of what you will make, by when, and for how much protects both sides. It also turns a conversation into a record you can reuse for the next client.',y:'Try this: send your next client a three-line email recap after you talk.'},
+ paid:{t:'Lesson 4 · Easy to pay',p:'Every extra step between yes and paid is a chance for the deal to stall. A deposit up front and one clear way to pay the rest keep cash moving.',y:'Try this: decide on one default way to get paid and put it in every quote.'},
+ delivered:{t:'Lesson 5 · One record per client',p:'When client details live in your head, they leave when you get busy. One simple record per client (what they bought, when, what they liked) is what makes repeat work possible.',y:'Try this: start a list of every client from the past year with what you made for them.'},
+ back:{t:'Lesson 6 · Come back',p:'People who already paid you know your work and trust you. A follow-up, a note when you have something new, or a simple referral ask is usually the cheapest work you will ever win.',y:'Try this: send one past client a note about what you are working on now.'},
+ week:{t:'Lesson 7 · Your week',p:'The hours you spend chasing messages, payments and files are hours you are not making work. Putting a number on it shows what a better system is worth.',y:'Try this: for one week, jot down every time admin pulls you away from the work.'}};
+const STEPS=[...STATIONS.map(st=>({k:st.k,type:'station',lvl:st.n,q:st.q,s:st.s,st})),{k:'week',type:'week',lvl:'Your week',q:'What does it cost you?',s:'Slide to how many hours a week go to messages, quotes, payments and tracking.'}];
+const S={tools:{},health:{},hours:4,headache:null};
+STATIONS.forEach(st=>{S.tools[st.k]=[]});
+const HEADACHES=['Answering messages','Quoting and pricing','Chasing payments','Keeping track of orders','Following up','Posting and promoting'];
+let i=-1;
+function src(){return ''}
+function lessonHTML(k){const l=LESSONS[k];if(!l)return '';
+  return `<aside class="lesson"><div class="lhead">${ico(k,32)}<div><h3>${l.t}</h3><p class="take">${SHORT[k]}</p></div></div><details><summary>Why it matters</summary><p>${l.p}</p><p class="try">${l.y}</p></details></aside>`}
+const POS=[[90,92],[300,92],[510,92],[510,292],[300,292],[90,292]];
+function board(){
+  const done=STATIONS.filter(st=>S.health[st.k]);
+  let h=`<rect width="600" height="420" fill="#F4F0E6"/>
+  <path d="M90 92 H510 Q560 92 560 142 V242 Q560 292 510 292 H90" fill="none" stroke="#17150F" stroke-width="10" stroke-linecap="round" opacity=".08"/>
+  <path d="M90 92 H510 Q560 92 560 142 V242 Q560 292 510 292 H90" fill="none" stroke="#17150F" stroke-width="1.6" stroke-dasharray="3 7" stroke-linecap="round"/>`;
+  STATIONS.forEach((st,n)=>{const [x,y]=POS[n],hl=S.health[st.k],cur=STEPS[i]&&STEPS[i].k===st.k,tools=S.tools[st.k];
+    const ring=hl==='leak'?'#7C2D24':hl==='slow'?'#A44F20':'#17150F',fill=hl==='smooth'?'#17150F':hl?'#FFFDF8':'#FFFDF8',num=hl==='smooth'?'#FFFDF8':'#17150F';
+    h+=`<g>${cur?`<circle cx="${x}" cy="${y}" r="31" fill="none" stroke="#7C2D24" stroke-width="2"/>`:''}
+    <circle cx="${x}" cy="${y}" r="24" fill="${fill}" stroke="${ring}" stroke-width="${hl?2.4:1.6}" ${hl==='slow'?'stroke-dasharray="5 4"':''}/>
+    <g transform="translate(${x-12} ${y-12})" fill="none" stroke="${num}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICON[st.k]}</g>
+    <text x="${x}" y="${n<3?y-38:y+46}" text-anchor="middle" font-family="'Libre Caslon Display',Georgia,serif" font-size="17" fill="#17150F">${st.n}</text>`;
+    if(hl==='leak')h+=`<path d="M${x+16} ${y+16} l5 3 l-1 5 l6 2" fill="none" stroke="#7C2D24" stroke-width="1.8"/><path d="M${x+32} ${y+26} q-3 6 0 8 q3 -2 0 -8 Z M${x+40} ${y+12} q-3 6 0 8 q3 -2 0 -8 Z" fill="#7C2D24"/>`;
+    const shown=tools.slice(0,3),more=tools.length-3,ty=n<3?y+44:y-64;
+    shown.forEach((t,j)=>{const w=Math.min(150,t.length*6.4+16),yy=n<3?ty+j*20:ty+j*20;h+=`<rect x="${x-w/2}" y="${yy}" width="${w}" height="16" rx="8" fill="#FFFDF8" stroke="#ddd5c4"/><text x="${x}" y="${yy+11.5}" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#17150F">${esc(t)}</text>`});
+    if(more>0)h+=`<text x="${x}" y="${ty+3*20+10}" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="9.5" fill="#5a5246">+${more} more</text>`;
+    h+='</g>'});
+  const leaks=STATIONS.filter(st=>S.health[st.k]==='leak').length,smooth=STATIONS.filter(st=>S.health[st.k]==='smooth').length;
+  h+=`<g font-family="'IBM Plex Mono',monospace" font-size="11" letter-spacing="1" fill="#5a5246"><text x="300" y="186" text-anchor="middle">${done.length?`SMOOTH ${smooth} · LEAKS ${leaks}`:'TAP THROUGH THE STATIONS'}</text>${STEPS[i]&&STEPS[i].type==='week'||S.done?`<text x="300" y="206" text-anchor="middle" fill="#7C2D24">${S.hours} HOURS A WEEK ON ADMIN</text>`:''}</g>`;
+  boardEl.innerHTML=h;
+}
+function render(){
+  board();
+  if(i<0){
+    panel.innerHTML=`${INTAKE.first?`<p class="lvl">Prepared for ${esc(INTAKE.first)}</p>`:'<p class="lvl">How this works</p>'}<h2>Draw how your business runs</h2><p class="sub">Six stations, from the first time someone finds you to the day they come back. At each one, tap the tools you use and say how well it works.</p>
+    <div class="steps"><div>${ico('found',36)}<span>Tap your tools</span></div><div>${ico('agree',36)}<span>Mark the leaks</span></div><div>${ico('step3',36)}<span>Keep your map</span></div></div>
+    <div class="row"><button class="btn" id="go" type="button">Start mapping</button></div>`;
+    $('#go').addEventListener('click',()=>{i=0;render()});return;
+  }
+  const stp=STEPS[i];
+  let h=`<div class="dots">${STEPS.map((_,n)=>`<i class="${n<=i?'done':''}"></i>`).join('')}</div><p class="lvl">Level ${i+1} of ${STEPS.length} · ${stp.lvl}</p><h2>${stp.q}</h2><p class="sub">${stp.s}</p>`+lessonHTML(stp.k);
+  if(stp.type==='station'){
+    const sel=S.tools[stp.k];
+    h+=`<div class="chips">${stp.st.tools.map(t=>`<button type="button" class="chip${sel.includes(t)?' sel':''}" aria-pressed="${sel.includes(t)}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+    <p class="lvl" style="margin-top:18px">How well does it work?</p><div class="opts">${HEALTH.map(o=>`<button type="button" class="opt${S.health[stp.k]===o.id?' sel':''}" data-h="${o.id}"><b>${o.b}</b><small>${o.d}</small></button>`).join('')}</div>`;
+  }else{
+    h+=`<div class="dial"><div class="ends"><span>0 hours</span><span class="on">${S.hours} hours a week</span><span>20+</span></div><input type="range" min="0" max="20" step="1" value="${S.hours}" id="hrs" aria-label="Hours a week on admin"></div>
+    <p class="lvl" style="margin-top:14px">Your biggest headache</p><div class="chips">${HEADACHES.map(t=>`<button type="button" class="chip${S.headache===t?' sel':''}" data-x="${esc(t)}">${esc(t)}</button>`).join('')}</div>`;
+  }
+  const ready=stp.type==='week'||S.health[stp.k];
+  h+=`<div class="row"><button class="btn ghost" id="back" type="button">Back</button><button class="btn" id="go" type="button"${ready?'':' disabled'}>${i===STEPS.length-1?'See my flow map':'Next station'}</button></div>`;
+  panel.innerHTML=h;
+  panel.querySelectorAll('[data-t]').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.t,a=S.tools[stp.k];S.tools[stp.k]=a.includes(t)?a.filter(x=>x!==t):[...a,t];render()}));
+  panel.querySelectorAll('[data-h]').forEach(b=>b.addEventListener('click',()=>{S.health[stp.k]=b.dataset.h;render()}));
+  panel.querySelectorAll('[data-x]').forEach(b=>b.addEventListener('click',()=>{S.headache=b.dataset.x;render()}));
+  const r=$('#hrs');if(r)r.addEventListener('input',()=>{S.hours=+r.value;r.parentElement.querySelector('.on').textContent=S.hours+' hours a week';board()});
+  $('#go').addEventListener('click',()=>{if(i<STEPS.length-1){i++;render()}else finish()});
+  $('#back').addEventListener('click',()=>{i--;render()});
+}
+const FIX={found:'Focus on the one or two places that actually bring clients, and point them all to a home you own.',reach:'One inbox: every inquiry, from any channel, lands in one place you check.',agree:'A simple quote template, so every yes is written down in minutes.',paid:'One default way to get paid, with a deposit up front.',delivered:'A client record for every job: what, when and for how much.',back:'A follow-up rhythm and a referral ask, so past clients bring the next ones.'};
+function summary(){
+  const order=['leak','slow'];let worst=null;
+  for(const lv of order){worst=STATIONS.find(st=>S.health[st.k]===lv);if(worst)break}
+  const leaks=STATIONS.filter(st=>S.health[st.k]==='leak'),slows=STATIONS.filter(st=>S.health[st.k]==='slow'),smooth=STATIONS.filter(st=>S.health[st.k]==='smooth');
+  const memory=Object.values(S.tools).flat().filter(t=>/head|Nothing/.test(t)).length;
+  return {worst,leaks,slows,smooth,memory,fixes:[...leaks,...slows].map(st=>FIX[st.k])};
+}
+function reveal(){
+  S.done=true;board();
+  const r=summary();
+  panel.innerHTML=`<div class="result"><p class="lvl">Your flow map</p><h2>${r.worst?`Your biggest leak is at "${r.worst.n}"`:'Your flow runs smoothly'}</h2>
+  <p>${r.smooth.length} of 6 stations run smoothly.${r.leaks.length?` Things get lost at ${r.leaks.length}.`:''}${r.slows.length?` ${r.slows.length} ${r.slows.length===1?'runs':'run'} slow.`:''} You spend about ${S.hours} hours a week on admin${S.headache?`, and ${S.headache.toLowerCase()} is the biggest headache`:''}.</p>
+  <div class="bc">
+    <div><h3>Station by station</h3><ul class="plots">${STATIONS.map(st=>`<li>${S.health[st.k]==='smooth'?'✓':S.health[st.k]==='leak'?'✕':'~'} ${esc(st.n)}: ${esc(S.tools[st.k].join(', ')||'no tools picked')}</li>`).join('')}</ul></div>
+    <div><h3>What would help most</h3><ul class="plots">${(r.fixes.length?r.fixes:['Keep what works, and write it down so it survives a busy season.']).slice(0,3).map(f=>`<li>→ ${esc(f)}</li>`).join('')}</ul></div>
+  </div>
+  <h3 class="lvl" style="margin-top:6px">What to do with this</h3><ol class="howto"><li><span>Copy your map and keep it with your business notes.</span></li><li><span>Fix the first leak before adding any new tool.</span></li><li><span>Pair it with <a href="https://brand.terencelatimer.com">See Your Brand</a> and <a href="https://voice.terencelatimer.com">Tune Your Voice</a> for the full picture.</span></li></ol>
+  <div class="row"><button class="btn" id="copy" type="button">Copy my flow map</button><button class="btn ghost" id="again" type="button">Play again</button></div>
+  <p class="note" id="cmsg"></p></div>`;
+  const s=$('#stamp');s.classList.remove('on');void s.offsetWidth;s.classList.add('on');
+  $('#again').addEventListener('click',()=>{STATIONS.forEach(st=>{S.tools[st.k]=[];delete S.health[st.k]});S.hours=4;S.headache=null;S.done=false;i=-1;s.classList.remove('on');render()});
+  $('#copy').addEventListener('click',()=>{const t=cardPairs().map(p=>p[0]+': '+p[1]).join('\n');navigator.clipboard.writeText('Flow map\n'+t).then(()=>$('#cmsg').textContent='Copied to your clipboard.').catch(()=>$('#cmsg').textContent='Your browser blocked copying here. Select the map text above instead.')});
+}
+const GAME='flow';
+function cardPairs(){const r=summary();
+  return [...STATIONS.map(st=>[st.n,(HEALTH.find(h=>h.id===S.health[st.k])||{b:'Not rated'}).b+' · '+(S.tools[st.k].join(', ')||'no tools picked')]),['Biggest leak',r.worst?r.worst.n:'None'],['Hours a week on admin',String(S.hours)],['Biggest headache',S.headache||'Not picked'],['Steps that live in memory or nowhere',String(r.memory)]]}
+/* Intake: personal links (?for=CODE) and sending the card to Terence's CRM */
+const API='https://us-west1-tle-operations.cloudfunctions.net/webhook-intake-save_answers';
+const INTAKE={code:null,first:null};
+try{const c=new URLSearchParams(location.search).get('for');
+  if(c&&/^[A-Za-z0-9_-]{6,40}$/.test(c)){INTAKE.code=c;
+    fetch(API+'?for='+encodeURIComponent(c)).then(r=>{if(r.status===404){INTAKE.code=null;return null}return r.ok?r.json():null})
+      .then(j=>{if(j&&typeof j.first==='string'){INTAKE.first=j.first;if(i<0)render()}}).catch(()=>{})}}catch(e){}
+function sendCard(contact){
+  return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({game:GAME,code:INTAKE.code,card:cardPairs(),contact:contact||null,hp:contact&&contact.hp||''})})
+    .then(r=>r.ok).catch(()=>false)}
+function status(msg){const m=$('#cmsg');if(m)m.textContent=msg}
+const SENT='Sent. Terence has your card and will follow up with ideas for your brand.';
+const FAIL="Your card couldn't be sent just now. Copy it and send it to Terence directly.";
+function finish(){
+  if(INTAKE.code){reveal();status('Sending your card to Terence…');sendCard(null).then(ok=>status(ok?SENT:FAIL));return}
+  panel.innerHTML=`<p class="lvl">Last step</p><h2>Where should I send your card?</h2>
+  <p class="sub">I'll review your answers and follow up with ideas for your brand. Your details stay private and are never sold or shared.</p>
+  <form id="cf" novalidate>
+    <div class="field"><label for="c-name">Your name *</label><input type="text" id="c-name" autocomplete="name" maxlength="120"></div>
+    <div class="field"><label for="c-email">Email *</label><input type="email" id="c-email" autocomplete="email" maxlength="200"></div>
+    <div class="field"><label for="c-phone">Phone</label><input type="tel" id="c-phone" autocomplete="tel" maxlength="40"></div>
+    <div class="field"><label for="c-biz">Business or project name</label><input type="text" id="c-biz" autocomplete="organization" maxlength="160"></div>
+    <div class="field"><label for="c-web">Website or main social link</label><input type="url" id="c-web" autocomplete="url" maxlength="200"></div>
+    <div class="hp" aria-hidden="true"><label for="c-hp">Leave this empty</label><input type="text" id="c-hp" tabindex="-1" autocomplete="off"></div>
+    <label class="consent"><input type="checkbox" id="c-ok"> <span>I agree that Terence Latimer can contact me about my brand.</span></label>
+    <p class="err" id="c-err" role="alert"></p>
+    <div class="row"><button class="btn ghost" type="button" id="c-back">Back</button><button class="btn" type="submit" id="c-go">Send my card and reveal</button></div>
+    <p class="note"><button type="button" class="linkish" id="c-skip">Show my card without sending it</button></p>
+  </form>`;
+  $('#c-back').addEventListener('click',()=>render());
+  $('#c-skip').addEventListener('click',()=>{reveal();status('Not sent. Copy your card if you want to keep it.')});
+  $('#cf').addEventListener('submit',e=>{e.preventDefault();
+    const v=id=>$(id).value.trim();
+    const c={name:v('#c-name'),email:v('#c-email'),phone:v('#c-phone'),business:v('#c-biz'),website:v('#c-web'),consent:$('#c-ok').checked,hp:v('#c-hp')};
+    const err=!c.name?'Please add your name.':!/^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(c.email)?'Please add a working email address.':!c.consent?'Please tick the box so Terence can follow up.':'';
+    if(err){$('#c-err').textContent=err;return}
+    const b=$('#c-go');b.disabled=true;b.textContent='Sending…';
+    sendCard(c).then(ok=>{reveal();status(ok?SENT:FAIL)})});
+}
+render();
+}
+</script>
+</body>
+</html>

@@ -1,10 +1,19 @@
 {
-  "projects": { "default": "tle-operations" },
+  "projects": {
+    "default": "tle-operations"
+  },
   "targets": {
     "tle-operations": {
       "hosting": {
-        "brand": ["terencelatimer-brand"],
-        "voice": ["terencelatimer-voice"]
+        "brand": [
+          "terencelatimer-brand"
+        ],
+        "voice": [
+          "terencelatimer-voice"
+        ],
+        "flow": [
+          "terencelatimer-flow"
+        ]
       }
     }
   }
