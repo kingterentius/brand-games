@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>See Your Brand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Baloo+2:wght@600;700&family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: playful, quick, a design game you tap through in three minutes
+   IDEA: a brand board — every choice lands at once on a phone site, business card, post, tote and email
+   PICTURE: a live mockup board, the player's brand applied across five touchpoints
+   COLOUR and TYPE: white housing, near-black ink, coral accent; the board carries the player's own colors and font
+   LAYOUT: board left (large), choice card right; stacks board-over-card under 860px */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#121218);--ink:light-dark(#16151a,#f1eff5);--soft:light-dark(#f2f1f5,#1d1c25);--line:light-dark(#dedce5,#33313f);--mute:light-dark(#5d5a68,#a8a4b6);--hot:#ff4f5e}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3vw,40px) max(4vw,16px);max-width:1240px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:18px}
+h1{font:36px/1.05 'Archivo Black',Inter,sans-serif;margin:0;text-wrap:balance}
+header p{margin:0;color:var(--mute)}
+.wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px;align-items:start}
+.stage{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:600/420;box-shadow:0 18px 40px -22px rgba(20,10,40,.45)}
+.stage svg{display:block;width:100%;height:100%}
+#board{animation:pop .35s ease}
+@keyframes pop{from{opacity:.55}to{opacity:1}}
+.tp{transition:opacity .4s ease}
+.stamp{position:absolute;right:4%;top:5%;padding:8px 16px;border:4px solid var(--hot);color:var(--hot);font:20px 'Archivo Black',sans-serif;border-radius:10px;transform:rotate(-8deg) scale(2.4);opacity:0;background:rgba(255,255,255,.9);pointer-events:none}
+.stamp.on{animation:stamp .5s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes stamp{to{transform:rotate(-8deg) scale(1);opacity:1}}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,2.4vw,28px)}
+.dots{display:flex;gap:6px;margin-bottom:14px}
+.dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.dots i.done{background:var(--hot)}
+.lvl{font-size:14px;color:var(--mute);margin:0 0 4px}
+h2{font:26px/1.1 'Archivo Black',Inter,sans-serif;margin:0 0 6px;text-wrap:balance}
+.sub{margin:0 0 16px;color:var(--mute)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+.opt{font:inherit;color:inherit;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:12px 14px;min-height:64px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.opt:hover{border-color:var(--hot)}
+.opt.sel{border-color:var(--hot);box-shadow:0 0 0 3px color-mix(in srgb,var(--hot) 25%,transparent)}
+.opt b{font-weight:700}
+.opt small{color:var(--mute);font-size:14px;line-height:1.35}
+.opt svg{width:56px;height:56px}
+.sw{display:flex;gap:4px}.sw span{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.12)}
+.sample{font-size:20px;line-height:1.2;overflow-wrap:anywhere}
+input[type=text]{width:100%;font:16px Inter,sans-serif;padding:13px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+input[type=text]:focus{outline:none;border-color:var(--hot)}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.btn{font:600 16px Inter,sans-serif;min-height:46px;padding:0 20px;border-radius:999px;border:0;background:var(--hot);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:focus-visible,.opt:focus-visible,.chip:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 15px Inter,sans-serif;min-height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.chip.sel{background:var(--hot);border-color:var(--hot);color:#fff}
+.toast{margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--bg);border:2px dashed var(--hot)}
+.toast b{color:var(--hot)}
+.hexes{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:6px;font-size:14px}
+.hexes span{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.hexes i{width:16px;height:16px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+.result h2{font-size:32px}
+.bc{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;display:grid;gap:12px}
+.bc h3{margin:0 0 2px;font-size:14px;color:var(--mute);font-weight:600}
+.plots{list-style:none;padding:0;margin:4px 0 0;display:grid;gap:2px;font-size:15px}
+.note{font-size:13px;color:var(--mute);margin:10px 0 0}
+@media(max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){#board{animation:none}.stamp.on{animation:none;opacity:1;transform:rotate(-8deg)}}
+</style>
+</head>
+<body>
+<main class="band">
+  <header>
+    <h1>See your brand</h1>
+    <p>Seven quick choices. Watch your brand come to life everywhere it shows up.</p>
+  </header>
+  <div class="wrap">
+    <div class="stage">
+      <svg id="scene" viewBox="0 0 600 420" role="img" aria-label="Your brand applied to a website, business card, social post, tote bag and email"><g id="board"></g></svg>
+      <div class="stamp" id="stamp">BRAND READY</div>
+    </div>
+    <section class="card" id="panel" aria-live="polite"></section>
+  </div>
+</main>
+<script>
+{
+const $=s=>document.querySelector(s);
+const panel=$('#panel'),boardEl=$('#board');
+const NEUTRAL={c:['#b9b3ab','#3d3a37','#e2dcd2','#f4f2ef'],on:'#ffffff'};
+const PALS=[
+  {id:'clay',b:'Sunset Clay',c:['#d9694a','#2e2148','#f6c04d','#fbf1e6'],on:'#ffffff',a:['host']},
+  {id:'sage',b:'Sage & Sand',c:['#5f8a66','#22301f','#e9c46a','#f3f1e8'],on:'#ffffff',a:['keeper']},
+  {id:'electric',b:'Electric',c:['#2b3fe0','#0e0e14','#ff4fa3','#eef0ff'],on:'#ffffff',a:['trail']},
+  {id:'candy',b:'Candy Pop',c:['#ff7eb6','#3b2a6b','#ffe45e','#fff3f8'],on:'#3b2a6b',a:['tink']},
+  {id:'luxe',b:'Midnight Luxe',c:['#1f2a44','#0b0f1a','#c9a227','#f4f1ea'],on:'#ffffff',a:['keeper','host']}];
+const FONTS=[
+  {id:'fraunces',b:'Warm and classic',fn:'Fraunces',f:"'Fraunces',Georgia,serif",a:['host']},
+  {id:'archivo',b:'Loud and bold',fn:'Archivo Black',f:"'Archivo Black',Impact,sans-serif",a:['trail']},
+  {id:'baloo',b:'Round and friendly',fn:'Baloo 2',f:"'Baloo 2',system-ui,sans-serif",a:['tink']},
+  {id:'inter',b:'Clean and modern',fn:'Inter',f:"'Inter',system-ui,sans-serif",a:['keeper']}];
+const LOGOS=[
+  {id:'mono',b:'Monogram',d:'Your initial in a circle',a:['keeper']},
+  {id:'badge',b:'Badge',d:'A crest people trust',a:['host']},
+  {id:'spark',b:'Spark',d:'An abstract symbol',a:['tink']},
+  {id:'word',b:'Initials block',d:'Letters as the logo',a:['trail']}];
+const VOICES=[
+  {id:'warm',b:'Warm',t:'Come on in, we saved you a seat.',a:['host']},
+  {id:'bold',b:'Bold',t:'Built different. Built here.',a:['trail']},
+  {id:'playful',b:'Playful',t:'Good vibes, served daily.',a:['tink']},
+  {id:'steady',b:'Steady',t:'Trusted from day one.',a:['keeper']}];
+const STYLES=[
+  {id:'glow',b:'Soft glow',d:'Blurred light and warmth',a:['host']},
+  {id:'geo',b:'Geometric',d:'Sharp shapes, high energy',a:['trail']},
+  {id:'hand',b:'Hand-drawn',d:'Doodles and squiggles',a:['tink']},
+  {id:'minimal',b:'Minimal',d:'Thin lines, lots of air',a:['keeper']}];
+const TPS=['Website','Business card','Social media','Merch and packaging','Email newsletter'];
+const ARCH={
+  host:{n:'The Host',d:'People come for how you make them feel. Your brand is warm, generous and hard to leave.'},
+  trail:{n:'The Trailblazer',d:'You go first and set the pace. Your brand is loud, confident and gets talked about.'},
+  keeper:{n:'The Lighthouse Keeper',d:'Steady and trusted. When things get stormy, people look for you, and you are always there.'},
+  tink:{n:'The Tinkerer',d:'Playful and inventive. Your brand turns the ordinary into something people want to try.'}};
+const STEPS=[
+  {k:'name',type:'text',lvl:'Name it',q:'What is your brand called?',s:'Type it and watch it show up everywhere.'},
+  {k:'pal',type:'pick',lvl:'Color',q:'Which colors are yours?',s:'Tap one. Every piece repaints.',o:PALS},
+  {k:'font',type:'pick',lvl:'Type',q:'Which lettering feels like you?',s:'This is how your name looks wherever it appears.',o:FONTS},
+  {k:'logo',type:'pick',lvl:'Logo',q:'Pick your mark',s:'The little symbol people will spot from across the room.',o:LOGOS},
+  {k:'voice',type:'pick',lvl:'Voice',q:'Which line sounds like you?',s:'This becomes your tagline.',o:VOICES},
+  {k:'style',type:'pick',lvl:'Style',q:'What is your visual style?',s:'The texture behind everything.',o:STYLES},
+  {k:'tp',type:'multi',lvl:'Touchpoints',q:'Where will people see your brand?',s:'Tap each place your brand shows up. Watch it light up.'}];
+const S={name:'',pal:null,font:null,logo:null,voice:null,style:null,tp:[],bonus:false};
+let i=0;
+const find=(a,id)=>a.find(x=>x.id===id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nm=()=>(S.name||'').trim()||'Your Brand';
+const initials=()=>nm().split(/\s+/).filter(Boolean).slice(0,3).map(w=>w[0].toUpperCase()).join('');
+const fit=(len,w,max)=>Math.max(7,Math.min(max,w/(Math.max(len,1)*0.62)));
+const slug=()=>nm().toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand';
+
+function logo(cx,cy,r,kind,fill,fg,f){
+  const ini=initials()[0]||'Y';
+  const T=(t,sz)=>`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-family="${f}" font-weight="700" font-size="${sz}" fill="${fg}">${esc(t)}</text>`;
+  if(kind==='badge'){const p=[0,1,2,3,4,5].map(n=>{const a=Math.PI/3*n-Math.PI/2;return `${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`}).join(' ');
+    return `<polygon points="${p}" fill="${fill}"/><polygon points="${p}" fill="none" stroke="${fg}" stroke-width="${r*.06}" transform="translate(${cx} ${cy}) scale(.8) translate(${-cx} ${-cy})" opacity=".6"/>`+T(ini,r*.9)}
+  if(kind==='spark'){const k=r;return `<path d="M${cx} ${cy-k}Q${cx+k*.18} ${cy-k*.18} ${cx+k} ${cy}Q${cx+k*.18} ${cy+k*.18} ${cx} ${cy+k}Q${cx-k*.18} ${cy+k*.18} ${cx-k} ${cy}Q${cx-k*.18} ${cy-k*.18} ${cx} ${cy-k}z" fill="${fill}"/><circle cx="${cx+k*.62}" cy="${cy-k*.62}" r="${k*.16}" fill="${fill}"/>`}
+  if(kind==='word'){const t=initials();return `<rect x="${cx-r}" y="${cy-r*.75}" width="${r*2}" height="${r*1.5}" rx="${r*.18}" fill="${fill}"/>`+T(t,fit(t.length,r*1.7,r*1.05))}
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}"/>`+T(ini,r*1.05);
+}
+
+function deco(x,y,w,h,st,p){
+  const a=p.c[2],k=p.c[1];
+  if(st==='glow')return `<circle cx="${x+w*.15}" cy="${y+h*.15}" r="${w*.5}" fill="${a}" opacity=".35"/><circle cx="${x+w*.95}" cy="${y+h*.95}" r="${w*.55}" fill="#fff" opacity=".18"/>`;
+  if(st==='geo')return `<polygon points="${x+w},${y} ${x+w},${y+h*.6} ${x+w*.55},${y}" fill="${a}" opacity=".55"/><circle cx="${x+w*.08}" cy="${y+h}" r="${w*.24}" fill="${k}" opacity=".25"/><rect x="${x+w*.1}" y="${y+h*.12}" width="${w*.08}" height="${w*.08}" fill="${a}" transform="rotate(20 ${x+w*.14} ${y+h*.16})"/>`;
+  if(st==='hand'){const sy=y+h*.16,sx=x+w*.08,u=w*.07;return `<path d="M${sx} ${sy}q${u/2} ${-u} ${u} 0t${u} 0t${u} 0t${u} 0" stroke="${a}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M${x+w*.78} ${y+h*.86}c${w*.1} ${-h*.12} ${w*.2} ${h*.05} ${w*.1} ${h*.1}s${-w*.16} 0 ${-w*.06} ${-h*.14}" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round"/><circle cx="${x+w*.88}" cy="${y+h*.2}" r="3" fill="${a}"/><circle cx="${x+w*.8}" cy="${y+h*.28}" r="2" fill="#fff" opacity=".8"/>`}
+  if(st==='minimal')return `<line x1="${x}" y1="${y+h*.88}" x2="${x+w}" y2="${y+h*.88}" stroke="#fff" opacity=".35"/><line x1="${x+w*.88}" y1="${y}" x2="${x+w*.88}" y2="${y+h}" stroke="#fff" opacity=".35"/>`;
+  return '';
+}
+
+function lines(t,max){const ws=t.split(' '),out=[];let cur='';ws.forEach(w=>{if((cur+' '+w).trim().length>max){out.push(cur.trim());cur=w}else cur+=' '+w});out.push(cur.trim());return out.filter(Boolean)}
+
+function board(){
+  const p=find(PALS,S.pal)||NEUTRAL,F=find(FONTS,S.font),f=F?F.f:"Inter,sans-serif",lk=S.logo||'mono',st=S.style||'',v=find(VOICES,S.voice);
+  const tag=v?v.t:'Your tagline goes here.',n=nm(),[pri,ink,acc,light]=p.c,on=p.on;
+  const lit=t=>i<6&&!S.done?1:(S.tp.includes(t)?1:.16);
+  const up=t=>F&&F.id==='archivo'?t.toUpperCase():t;
+  let h=`<rect width="600" height="420" fill="${light}"/>
+  <defs><clipPath id="cH"><rect x="40" y="44" width="160" height="190"/></clipPath><clipPath id="cP"><rect x="440" y="30" width="140" height="140" rx="10"/></clipPath><clipPath id="cE"><rect x="440" y="190" width="140" height="56"/></clipPath></defs>`;
+  h+=`<g class="tp" opacity="${lit('Website')}"><rect x="30" y="24" width="180" height="376" rx="26" fill="${ink}"/><rect x="40" y="44" width="160" height="340" rx="14" fill="#fff"/>
+  <g clip-path="url(#cH)"><rect x="40" y="44" width="160" height="190" fill="${pri}"/>${deco(40,44,160,190,st,p)}</g>
+  ${logo(120,96,22,lk,acc,ink,f)}
+  <text x="120" y="156" text-anchor="middle" font-family="${f}" font-weight="700" font-size="${fit(n.length,148,22)}" fill="${on}">${esc(up(n))}</text>
+  <text x="120" y="176" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="${on}" opacity=".92">${esc(tag)}</text>
+  <rect x="82" y="194" width="76" height="22" rx="11" fill="${acc}"/><text x="120" y="208" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="9" fill="${ink}">Book now</text>
+  <rect x="54" y="250" width="110" height="7" rx="3" fill="${ink}" opacity=".75"/><rect x="54" y="264" width="132" height="5" rx="2" fill="#000" opacity=".12"/><rect x="54" y="274" width="120" height="5" rx="2" fill="#000" opacity=".12"/>
+  <rect x="54" y="292" width="62" height="74" rx="8" fill="${light}"/><rect x="124" y="292" width="62" height="74" rx="8" fill="${acc}" opacity=".55"/>
+  <rect x="62" y="350" width="40" height="6" rx="3" fill="${ink}" opacity=".5"/><rect x="132" y="350" width="40" height="6" rx="3" fill="${ink}" opacity=".5"/></g>`;
+  h+=`<g class="tp" opacity="${lit('Business card')}"><rect x="243" y="34" width="180" height="108" rx="8" fill="#000" opacity=".12"/><rect x="238" y="28" width="180" height="108" rx="8" fill="${ink}"/>
+  ${logo(272,72,17,lk,pri,on,f)}
+  <text x="298" y="70" font-family="${f}" font-weight="700" font-size="${fit(n.length,110,15)}" fill="#fff">${esc(up(n))}</text>
+  <text x="298" y="86" font-family="Inter,sans-serif" font-size="7.5" fill="${acc}">${esc(tag.length>26?tag.slice(0,25)+'…':tag)}</text>
+  <rect x="252" y="106" width="152" height="1" fill="#fff" opacity=".2"/>
+  <text x="252" y="123" font-family="Inter,sans-serif" font-size="8" fill="#fff" opacity=".75">hello@${esc(slug())}.com</text></g>`;
+  const tl=lines(tag,13);
+  h+=`<g class="tp" opacity="${lit('Social media')}"><g clip-path="url(#cP)"><rect x="440" y="30" width="140" height="140" fill="${pri}"/>${deco(440,30,140,140,st,p)}</g>
+  ${tl.map((l,n)=>`<text x="510" y="${100-(tl.length-1)*9+n*18}" text-anchor="middle" font-family="${f}" font-weight="700" font-size="15" fill="${on}">${esc(up(l))}</text>`).join('')}
+  ${logo(458,152,8,lk,acc,ink,f)}<text x="472" y="155" font-family="Inter,sans-serif" font-size="8" fill="${on}" opacity=".85">@${esc(slug())}</text></g>`;
+  h+=`<g class="tp" opacity="${lit('Merch and packaging')}"><path d="M300 222v-22q0-28 30-28t30 28v22" stroke="${ink}" stroke-width="5" fill="none"/>
+  <rect x="252" y="214" width="156" height="180" rx="6" fill="#fff"/><rect x="252" y="214" width="156" height="180" rx="6" fill="${pri}" opacity=".12"/>
+  ${logo(330,284,30,lk,pri,on,f)}
+  <text x="330" y="346" text-anchor="middle" font-family="${f}" font-weight="700" font-size="${fit(n.length,132,18)}" fill="${ink}">${esc(up(n))}</text>
+  <rect x="300" y="360" width="60" height="4" rx="2" fill="${acc}"/></g>`;
+  h+=`<g class="tp" opacity="${lit('Email newsletter')}"><rect x="440" y="190" width="140" height="204" rx="10" fill="#fff" stroke="${ink}" stroke-opacity=".15"/>
+  <g clip-path="url(#cE)"><rect x="440" y="190" width="140" height="56" fill="${pri}"/>${deco(440,190,140,56,st,p)}</g>
+  <text x="510" y="223" text-anchor="middle" font-family="${f}" font-weight="700" font-size="${fit(n.length,118,15)}" fill="${on}">${esc(up(n))}</text>
+  <rect x="452" y="260" width="96" height="7" rx="3" fill="${ink}" opacity=".75"/><rect x="452" y="274" width="116" height="5" rx="2" fill="#000" opacity=".12"/><rect x="452" y="284" width="108" height="5" rx="2" fill="#000" opacity=".12"/><rect x="452" y="294" width="112" height="5" rx="2" fill="#000" opacity=".12"/>
+  <rect x="452" y="310" width="116" height="48" rx="6" fill="${light}"/>
+  <rect x="476" y="368" width="68" height="16" rx="8" fill="${acc}"/><text x="510" y="379" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="7.5" fill="${ink}">Read more</text></g>`;
+  boardEl.innerHTML=h;
+  boardEl.style.animation='none';void boardEl.getBoundingClientRect();boardEl.style.animation='';
+}
+
+function scores(){
+  const t={host:0,trail:0,keeper:0,tink:0};
+  [[PALS,'pal',2],[FONTS,'font',2],[LOGOS,'logo',1],[VOICES,'voice',2],[STYLES,'style',1]].forEach(([arr,k,w])=>{const o=find(arr,S[k]);if(o)o.a.forEach(a=>t[a]+=w)});
+  return Object.entries(t).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function optHTML(stp,o){
+  const sel=S[stp.k]===o.id?' sel':'',p=find(PALS,S.pal)||NEUTRAL,F=find(FONTS,S.font);
+  let body=`<b>${esc(o.b)}</b>`;
+  if(stp.k==='pal')body=`<span class="sw">${o.c.map(c=>`<span style="background:${c}"></span>`).join('')}</span>`+body;
+  else if(stp.k==='font')body+=`<span class="sample" style="font-family:${o.f}">${esc(nm())}</span><small>${esc(o.fn)}</small>`;
+  else if(stp.k==='logo')body=`<svg viewBox="0 0 56 56" aria-hidden="true">${logo(28,28,22,o.id,p.c[0],p.on,F?F.f:'Inter,sans-serif')}</svg>`+body+`<small>${esc(o.d)}</small>`;
+  else if(stp.k==='voice')body+=`<span class="sample" style="font-family:${F?F.f:'Inter,sans-serif'}">${esc(o.t)}</span>`;
+  else if(stp.k==='style')body=`<svg viewBox="0 0 56 56" aria-hidden="true"><defs><clipPath id="sc${o.id}"><rect width="56" height="56" rx="10"/></clipPath></defs><g clip-path="url(#sc${o.id})"><rect width="56" height="56" fill="${p.c[0]}"/>${deco(0,0,56,56,o.id,p)}</g></svg>`+body+`<small>${esc(o.d)}</small>`;
+  return `<button class="opt${sel}" data-id="${o.id}" type="button">${body}</button>`;
+}
+function bonusHTML(){const p=find(PALS,S.pal);if(!p)return '';
+  return `<div class="toast"><b>Bonus unlocked:</b> your color codes, free to keep.<div class="hexes">${p.c.map((c,n)=>`<span><i style="background:${c}"></i>${['Main','Dark','Accent','Light'][n]} ${c}</span>`).join('')}</div></div>`}
+
+function render(){
+  board();
+  const stp=STEPS[i];
+  const back=i>0?`<button class="btn ghost" id="back" type="button">Back</button>`:'';
+  let h=`<div class="dots">${STEPS.map((_,n)=>`<i class="${n<=i?'done':''}"></i>`).join('')}</div><p class="lvl">Level ${i+1} of 7 · ${stp.lvl}</p><h2>${stp.q}</h2><p class="sub">${stp.s}</p>`;
+  if(stp.type==='text')h+=`<label for="nm" class="lvl">Brand name</label><input id="nm" type="text" maxlength="28" autocomplete="off" placeholder="e.g. Black Cactus" value="${esc(S.name)}"><div class="row">${back}<button class="btn" id="go" type="button">Start designing</button></div>`;
+  else if(stp.type==='pick'){h+=`<div class="opts">${stp.o.map(o=>optHTML(stp,o)).join('')}</div>`;if(stp.k==='pal'&&S.bonus)h+=bonusHTML();h+=`<div class="row">${back}${S[stp.k]?'<button class="btn" id="go" type="button">Next</button>':''}</div>`}
+  else h+=`<div class="chips">${TPS.map(t=>`<button type="button" class="chip${S.tp.includes(t)?' sel':''}" aria-pressed="${S.tp.includes(t)}" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div><div class="row">${back}<button class="btn" id="go" type="button">Reveal my brand</button></div>`;
+  panel.innerHTML=h;
+  const inp=$('#nm');if(inp){inp.addEventListener('input',()=>{S.name=inp.value;board()});inp.addEventListener('keydown',e=>{if(e.key==='Enter')next()})}
+  panel.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>pick(stp,b.dataset.id)));
+  panel.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{const t=b.dataset.t;S.tp=S.tp.includes(t)?S.tp.filter(x=>x!==t):[...S.tp,t];render()}));
+  const g=$('#go');if(g)g.addEventListener('click',next);
+  const bk=$('#back');if(bk)bk.addEventListener('click',()=>{i--;S.done=false;render()});
+}
+let timer;
+function pick(stp,id){S[stp.k]=id;if(stp.k==='pal'&&!S.bonus){S.bonus=true;render();return}render();clearTimeout(timer);timer=setTimeout(()=>{if(STEPS[i]===stp)next()},700)}
+function next(){clearTimeout(timer);if(i<STEPS.length-1){i++;render()}else reveal()}
+
+function reveal(){
+  S.done=true;board();
+  const a=ARCH[scores()],p=find(PALS,S.pal)||PALS[0],F=find(FONTS,S.font)||FONTS[3],L=find(LOGOS,S.logo)||LOGOS[0],v=find(VOICES,S.voice)||VOICES[3],st=find(STYLES,S.style)||STYLES[3];
+  const roles=['Main','Dark','Accent','Light'];
+  panel.innerHTML=`<div class="result"><p class="lvl">Your brand personality</p><h2>${a.n}</h2><p>${a.d}</p>
+  <div class="bc">
+    <div><h3>Colors</h3><div class="hexes">${p.c.map((c,n)=>`<span><i style="background:${c}"></i>${roles[n]} ${c}</span>`).join('')}</div></div>
+    <div><h3>Type and tagline</h3><span class="sample" style="font-family:${F.f}">${esc(v.t)}</span><div class="note" style="margin-top:4px">${esc(F.fn)}, ${esc(F.b.toLowerCase())} · ${esc(v.b)} voice</div></div>
+    <div><h3>Look</h3>${esc(L.b)} logo with a ${esc(st.b.toLowerCase())} style</div>
+    <div><h3>Shows up in ${S.tp.length} of 5 places</h3><ul class="plots">${TPS.map(t=>`<li>${S.tp.includes(t)?'✓':'○'} ${esc(t)}${S.tp.includes(t)?'':' (not yet)'}</li>`).join('')}</ul></div>
+  </div>
+  <div class="row"><button class="btn" id="copy" type="button">Copy my brand card</button><button class="btn ghost" id="again" type="button">Play again</button></div>
+  <p class="note" id="cmsg">Prototype. In the live version this card is emailed to the player and their answers land in Odoo as a lead.</p></div>`;
+  const s=$('#stamp');s.classList.remove('on');void s.offsetWidth;s.classList.add('on');
+  $('#again').addEventListener('click',()=>{Object.assign(S,{name:'',pal:null,font:null,logo:null,voice:null,style:null,tp:[],bonus:false,done:false});i=0;s.classList.remove('on');render()});
+  $('#copy').addEventListener('click',()=>{
+    const t=`${nm()}: ${a.n}\nColors: ${p.c.map((c,n)=>roles[n]+' '+c).join(', ')}\nType: ${F.fn}\nTagline: "${v.t}" (${v.b} voice)\nLogo: ${L.b}, ${st.b} style\nShows up in: ${S.tp.join(', ')||'nowhere yet'}`;
+    navigator.clipboard.writeText(t).then(()=>$('#cmsg').textContent='Copied to your clipboard.').catch(()=>$('#cmsg').textContent='Your browser blocked copying here. Select the card text above instead.');
+  });
+}
+render();
+}
+</script>
+</body>
+</html>

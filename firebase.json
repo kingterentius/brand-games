@@ -1,0 +1,6 @@
+{
+  "hosting": [
+    { "target": "brand", "public": "brand", "ignore": ["firebase.json", "**/.*"] },
+    { "target": "voice", "public": "voice", "ignore": ["firebase.json", "**/.*"] }
+  ]
+}

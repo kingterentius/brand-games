@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tune Your Voice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: playful, quick, a sound-check you tap through in three minutes
+   IDEA: one message, six registers — a broadcast board where every channel rewrites itself as you turn the dials
+   PICTURE: six live register cards plus a "meaning kept" meter
+   COLOUR and TYPE: white housing, near-black ink, coral accent; Archivo Black titles, Inter body
+   LAYOUT: board left (large), controls right; stacks board-over-controls under 900px */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#121218);--ink:light-dark(#16151a,#f1eff5);--soft:light-dark(#f2f1f5,#1d1c25);--line:light-dark(#dedce5,#33313f);--mute:light-dark(#5d5a68,#a8a4b6);--hot:#ff4f5e;--ok:light-dark(#1f8a5b,#4cc38a);--paper:light-dark(#ffffff,#25232f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(20px,3vw,40px) max(4vw,16px);max-width:1240px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:18px}
+h1{font:36px/1.05 'Archivo Black',Inter,sans-serif;margin:0;text-wrap:balance}
+header p{margin:0;color:var(--mute)}
+.wrap{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:24px;align-items:start}
+.board{background:var(--soft);border:1px solid var(--line);border-radius:22px;padding:16px}
+.top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.words{display:flex;flex-wrap:wrap;gap:6px}
+.words span{font:600 13px Inter,sans-serif;padding:4px 10px;border-radius:999px;background:var(--ink);color:var(--bg)}
+.words em{font-style:normal;font-size:13px;color:var(--mute)}
+.meter{flex:1 1 220px;max-width:320px}
+.meter .lab{display:flex;justify-content:space-between;font-size:13px;color:var(--mute)}
+.meter .lab b{color:var(--ink);font-size:15px}
+.bar{height:12px;border-radius:6px;background:var(--line);overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--ok);transition:width .5s ease,background .5s}
+.regs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.reg{background:var(--paper);border:2px solid transparent;border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.reg.home{border-color:var(--hot)}
+.reg.lost{border-color:#e0a100}
+.reg h3{margin:0;font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.reg h3 small{font-weight:400;color:var(--mute);font-size:13px}
+.reg p{margin:0;font-size:15px;line-height:1.45}
+.reg .flag{font-size:13px;color:#b07a00;font-weight:600}
+:root[data-theme=dark] .reg .flag{color:#f0c04a}
+.tag{font-size:12px;font-weight:700;color:#fff;background:var(--hot);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,2.4vw,28px)}
+.dots{display:flex;gap:6px;margin-bottom:14px}
+.dots i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.dots i.done{background:var(--hot)}
+.lvl{font-size:14px;color:var(--mute);margin:0 0 4px}
+h2{font:26px/1.1 'Archivo Black',Inter,sans-serif;margin:0 0 6px;text-wrap:balance}
+.sub{margin:0 0 16px;color:var(--mute)}
+textarea{width:100%;font:16px/1.4 Inter,sans-serif;padding:13px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical;min-height:80px}
+textarea:focus{outline:none;border-color:var(--hot)}
+.starters{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.starters button{font:14px Inter,sans-serif;min-height:40px;padding:6px 12px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:var(--ink);cursor:pointer;text-align:left}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.btn{font:600 16px Inter,sans-serif;min-height:46px;padding:0 20px;border-radius:999px;border:0;background:var(--hot);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 15px Inter,sans-serif;min-height:44px;padding:0 16px;border-radius:999px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.chip.sel{background:var(--hot);border-color:var(--hot);color:#fff}
+.chip.no.sel{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.count{font-size:14px;color:var(--mute);margin-top:8px}
+.dial{margin-bottom:14px}
+.dial .ends{display:flex;justify-content:space-between;font-size:14px;font-weight:600}
+.dial .ends span.on{color:var(--hot)}
+input[type=range]{width:100%;accent-color:var(--hot);height:32px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px}
+.opt{font:inherit;color:inherit;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:12px 14px;min-height:60px;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.opt.sel{border-color:var(--hot);box-shadow:0 0 0 3px color-mix(in srgb,var(--hot) 25%,transparent)}
+.opt small{color:var(--mute);font-size:14px;line-height:1.35}
+.result h2{font-size:30px}
+.bc{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;display:grid;gap:12px}
+.bc h3{margin:0 0 2px;font-size:14px;color:var(--mute);font-weight:600}
+.prof{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.prof div{background:var(--soft);border-radius:10px;padding:8px 10px;font-size:14px}
+.prof b{display:block;font-size:16px}
+.note{font-size:13px;color:var(--mute);margin:10px 0 0}
+@media(max-width:900px){.wrap{grid-template-columns:minmax(0,1fr)}h1{font-size:30px}}
+@media(max-width:520px){.regs{grid-template-columns:minmax(0,1fr)}.reg{min-height:0}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main class="band">
+  <header>
+    <h1>Tune your voice</h1>
+    <p>One message, six places it lives. Turn the dials and keep the meaning.</p>
+  </header>
+  <div class="wrap">
+    <section class="board" aria-live="polite">
+      <div class="top"><div class="words" id="words"></div>
+        <div class="meter"><div class="lab"><span>Meaning kept</span><b id="fid">100%</b></div><div class="bar"><i id="fidbar" style="width:100%"></i></div></div></div>
+      <div class="regs" id="regs"></div>
+    </section>
+    <section class="card" id="panel" aria-live="polite"></section>
+  </div>
+</main>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DIMS=[
+  {k:'F',l:['Formal','Casual'],w:['Formal','Balanced','Casual']},
+  {k:'E',l:['Matter-of-fact','Enthusiastic'],w:['Matter-of-fact','Warm','Enthusiastic']},
+  {k:'H',l:['Serious','Funny'],w:['Serious','Light','Funny']},
+  {k:'R',l:['Respectful','Irreverent'],w:['Respectful','Direct','Irreverent']}];
+const OPEN=[["We would like to share the following.","We are pleased to share an idea we believe in.","We are delighted to share something we care about deeply."],
+  ["Here is what we believe.","Here's an idea we keep coming back to.","Here's something we're genuinely excited about!"],
+  ["Quick one.","So here's the thing.","Okay, you're going to love this!"]];
+const TAIL=[["We hope it serves you well.","Take what helps and leave the rest.","No one else is going to say it, so we will."],
+  ["Thanks for reading, as always.","Your move.","Fight us in the comments."],
+  ["Pinky promise it's worth it.","Coffee optional, but strongly recommended.","Rules were made to be gently ignored."]];
+const GREET=["Dear reader,","Hi there,","Hey friend,"],SAY=["Hello, and welcome.","Hi, everybody.","Hey hey, what's up!"],HOST=["We would value every perspective in the room.","Make your case.","Somebody tell us we're wrong."];
+const REGS=[
+  {id:'canon',n:'The Canon',d:'the record',t:(c)=>`${c}`,fixed:true},
+  {id:'long',n:'Long-form',d:'the full argument',t:(c,o,t)=>`${o} ${c} In this piece we make the full case and test it against the strongest objections. ${t}`},
+  {id:'news',n:'Newsletter',d:'one use, one reader',t:(c,o,t,b)=>`${GREET[b.F]} ${o} ${c} ${t}`},
+  {id:'video',n:'Video',d:'spoken, unscripted',t:(c,o,t,b)=>`"${SAY[b.F]} ${c} ${t}"`},
+  {id:'live',n:'Live',d:'dialogue',t:(c,o,t,b)=>`Tonight's prompt: "${c}" Agree or disagree? ${HOST[b.R]}`},
+  {id:'social',n:'Social',d:'a line',t:(c,o,t,b,tag)=>`${c} ${t} ${tag}`}];
+const WORDS=['Creative','Thought-provoking','Fun','Rascals','First','Green','Warm','Bold','Precise','Calm','Caring','Rebellious'];
+const ANTI=[{n:'Stiff',d:'F',b:0},{n:'Sloppy',d:'F',b:2},{n:'Cold',d:'E',b:0},{n:'Salesy',d:'E',b:2},{n:'Grim',d:'H',b:0},{n:'Silly',d:'H',b:2},{n:'Deferential',d:'R',b:0},{n:'Snarky',d:'R',b:2}];
+const LISTEN=['Comments','Email replies','Live Q&A','Direct messages','Surveys','In person'];
+const STARTERS=["Good writing doesn't have to be complicated.","Local businesses deserve big-city tools.","Food is how a community remembers itself."];
+const STEPS=[
+  {k:'core',lvl:'The message',q:'What do you want people to remember?',s:'One sentence. It shows up in all six places at once.'},
+  {k:'words',lvl:'Personality',q:'Pick three words that sound like you',s:'These sit on top of everything you write.'},
+  {k:'anti',lvl:'Never sound like',q:'What should you never sound like?',s:'Pick up to three. These are your guardrails.'},
+  {k:'dials',lvl:'Tone dials',q:'Tune your tone',s:'Slide each dial and watch every channel rewrite itself. Stay out of your guardrails to keep the meter full.'},
+  {k:'home',lvl:'Home base',q:'Where do you sound most like yourself?',s:'Your home base is where people hear you best.'},
+  {k:'listen',lvl:'We listen',q:'How should people talk back?',s:'Good communication runs both ways. Pick every way you want to hear from people.'}];
+const S={core:'',words:[],anti:[],dials:{F:2,E:2,H:2,R:2},home:null,listen:[]};
+let i=0;
+const bucket=v=>v<=1?0:v===2?1:2;
+const B=()=>({F:bucket(S.dials.F),E:bucket(S.dials.E),H:bucket(S.dials.H),R:bucket(S.dials.R)});
+const core=()=>{let c=(S.core||'').trim()||'Your message goes here.';if(!/[.!?]$/.test(c))c+='.';return c};
+const violations=()=>{const b=B();return ANTI.filter(a=>S.anti.includes(a.n)&&b[a.d]===a.b)};
+
+function board(){
+  const b=B(),c=core(),o=OPEN[b.F][b.E],t=TAIL[b.H][b.R];
+  const tag='#'+((S.words[0]||'yourvoice').toLowerCase().replace(/[^a-z]/g,''));
+  const v=violations();
+  const fid=Math.max(0,100-v.length*25);
+  $('#fid').textContent=fid+'%';const bar=$('#fidbar');bar.style.width=fid+'%';bar.style.background=fid>=75?'var(--ok)':fid>=50?'#e0a100':'var(--hot)';
+  $('#words').innerHTML=S.words.length?S.words.map(w=>`<span>${esc(w)}</span>`).join(''):'<em>Your three words show up here</em>';
+  $('#regs').innerHTML=REGS.map(r=>{
+    const lost=!r.fixed&&v.length;
+    const home=S.home===r.id;
+    return `<article class="reg${home?' home':''}${lost?' lost':''}"><h3><span>${r.n} <small>${r.d}</small></span>${home?'<span class="tag">Home base</span>':''}</h3>
+    <p>${esc(r.t(c,o,t,b,tag))}</p>${r.fixed?'<small class="note" style="margin:0">The record never changes. Every other channel is reduced from it, never replaced.</small>':''}${lost?`<span class="flag">Sounds ${esc(v.map(x=>x.n.toLowerCase()).join(' and '))}</span>`:''}</article>`}).join('');
+}
+
+function render(){
+  board();
+  const stp=STEPS[i];
+  const back=i>0?`<button class="btn ghost" id="back" type="button">Back</button>`:'';
+  let h=`<div class="dots">${STEPS.map((_,n)=>`<i class="${n<=i?'done':''}"></i>`).join('')}</div><p class="lvl">Level ${i+1} of ${STEPS.length} · ${stp.lvl}</p><h2>${stp.q}</h2><p class="sub">${stp.s}</p>`;
+  let next=`<button class="btn" id="go" type="button">Next</button>`;
+  if(stp.k==='core'){
+    h+=`<label class="lvl" for="core">Your message</label><textarea id="core" maxlength="140" placeholder="e.g. Good writing doesn't have to be complicated.">${esc(S.core)}</textarea><div class="starters">${STARTERS.map(s=>`<button type="button" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>`;
+  }else if(stp.k==='words'){
+    h+=`<div class="chips">${WORDS.map(w=>`<button type="button" class="chip${S.words.includes(w)?' sel':''}" aria-pressed="${S.words.includes(w)}" data-w="${w}">${w}</button>`).join('')}</div><p class="count">${S.words.length} of 3 picked</p>`;
+    next=`<button class="btn" id="go" type="button"${S.words.length?'':' disabled'}>Next</button>`;
+  }else if(stp.k==='anti'){
+    h+=`<div class="chips">${ANTI.map(a=>`<button type="button" class="chip no${S.anti.includes(a.n)?' sel':''}" aria-pressed="${S.anti.includes(a.n)}" data-a="${a.n}">${a.n}</button>`).join('')}</div><p class="count">${S.anti.length} of 3 picked</p>`;
+  }else if(stp.k==='dials'){
+    const b=B();
+    h+=DIMS.map(d=>`<div class="dial"><div class="ends"><span class="${b[d.k]===0?'on':''}">${d.l[0]}</span><span class="${b[d.k]===2?'on':''}">${d.l[1]}</span></div><input type="range" min="0" max="4" step="1" value="${S.dials[d.k]}" data-d="${d.k}" aria-label="${d.l[0]} to ${d.l[1]}"></div>`).join('');
+  }else if(stp.k==='home'){
+    h+=`<div class="opts">${REGS.map(r=>`<button type="button" class="opt${S.home===r.id?' sel':''}" data-h="${r.id}"><b>${r.n}</b><small>${r.d}</small></button>`).join('')}</div>`;
+  }else{
+    h+=`<div class="chips">${LISTEN.map(l=>`<button type="button" class="chip${S.listen.includes(l)?' sel':''}" aria-pressed="${S.listen.includes(l)}" data-l="${esc(l)}">${esc(l)}</button>`).join('')}</div>`;
+    next=`<button class="btn" id="go" type="button">Reveal my voice</button>`;
+  }
+  panel.innerHTML=h+`<div class="row">${back}${next}</div>`;
+  const ta=$('#core');if(ta)ta.addEventListener('input',()=>{S.core=ta.value;board()});
+  panel.querySelectorAll('.starters button').forEach(b=>b.addEventListener('click',()=>{S.core=b.dataset.s;render()}));
+  panel.querySelectorAll('[data-w]').forEach(b=>b.addEventListener('click',()=>{const w=b.dataset.w;if(S.words.includes(w))S.words=S.words.filter(x=>x!==w);else if(S.words.length<3)S.words=[...S.words,w];render()}));
+  panel.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.a;if(S.anti.includes(a))S.anti=S.anti.filter(x=>x!==a);else if(S.anti.length<3)S.anti=[...S.anti,a];render()}));
+  panel.querySelectorAll('input[type=range]').forEach(r=>r.addEventListener('input',()=>{S.dials[r.dataset.d]=+r.value;board();
+    const b=B();r.parentElement.querySelectorAll('.ends span').forEach((s,n)=>s.classList.toggle('on',(n===0&&b[r.dataset.d]===0)||(n===1&&b[r.dataset.d]===2)))}));
+  panel.querySelectorAll('[data-h]').forEach(b=>b.addEventListener('click',()=>{S.home=b.dataset.h;render()}));
+  panel.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',()=>{const l=b.dataset.l;S.listen=S.listen.includes(l)?S.listen.filter(x=>x!==l):[...S.listen,l];render()}));
+  $('#go').addEventListener('click',()=>{if(i<STEPS.length-1){i++;render()}else reveal()});
+  const bk=$('#back');if(bk)bk.addEventListener('click',()=>{i--;render()});
+}
+const panel=$('#panel');
+
+function reveal(){
+  board();
+  const b=B(),v=violations(),fid=Math.max(0,100-v.length*25),home=REGS.find(r=>r.id===S.home);
+  const prof=DIMS.map(d=>d.w[b[d.k]]);
+  const name=prof.join(', ');
+  panel.innerHTML=`<div class="result"><p class="lvl">Your voice, tuned</p><h2>${esc(prof[0])} and ${esc(prof[2].toLowerCase())}, with ${fid}% of your meaning kept</h2>
+  <p>${fid===100?'Every channel says the same thing in its own way, and nothing crosses your guardrails.':'Some channels cross a guardrail you set. Slide back to fix it before you publish.'}</p>
+  <div class="bc">
+    <div><h3>Your message</h3>${esc(core())}</div>
+    <div><h3>Tone profile</h3><div class="prof">${DIMS.map((d,n)=>`<div>${d.l[0]} to ${d.l[1].toLowerCase()}<b>${esc(prof[n])}</b></div>`).join('')}</div></div>
+    <div><h3>Always sound</h3>${esc(S.words.join(', ')||'Not picked yet')}</div>
+    <div><h3>Never sound</h3>${esc(S.anti.join(', ')||'No guardrails set')}${v.length?` <span class="flag">(currently crossing: ${esc(v.map(x=>x.n).join(', '))})</span>`:''}</div>
+    <div><h3>Home base</h3>${home?`${esc(home.n)}, ${esc(home.d)}`:'Not picked yet'}</div>
+    <div><h3>How people talk back</h3>${esc(S.listen.join(', ')||'Not picked yet')}</div>
+  </div>
+  <div class="row"><button class="btn" id="copy" type="button">Copy my voice card</button><button class="btn ghost" id="again" type="button">Play again</button></div>
+  <p class="note" id="cmsg">Prototype. In the live version this card is emailed to the player and their answers land in Odoo as a lead.</p></div>`;
+  $('#again').addEventListener('click',()=>{Object.assign(S,{core:'',words:[],anti:[],dials:{F:2,E:2,H:2,R:2},home:null,listen:[]});i=0;render()});
+  $('#copy').addEventListener('click',()=>{
+    const t=`Voice card\nMessage: ${core()}\nTone: ${name}\nAlways sound: ${S.words.join(', ')}\nNever sound: ${S.anti.join(', ')||'none set'}\nHome base: ${home?home.n:'not picked'}\nHow people talk back: ${S.listen.join(', ')||'not picked'}\nMeaning kept: ${fid}%`;
+    navigator.clipboard.writeText(t).then(()=>$('#cmsg').textContent='Copied to your clipboard.').catch(()=>$('#cmsg').textContent='Your browser blocked copying here. Select the card text above instead.');
+  });
+}
+render();
+}
+</script>
+</body>
+</html>
