@@ -121,6 +121,15 @@ input[type=range]{width:100%;accent-color:var(--rust);height:32px}
 .prof b{display:block;font:700 18px var(--display)}
 @media(max-width:520px){.regs{grid-template-columns:minmax(0,1fr)}.reg{min-height:0}}
 @media(prefers-reduced-motion:reduce){.mbar i{transition:none}}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+input[type=email],input[type=tel],input[type=url]{width:100%;font:16px/1.4 var(--body);padding:12px 14px;border-radius:6px;border:1px solid var(--ink);background:var(--daylight);color:var(--ink)}
+input[type=email]:focus,input[type=tel]:focus,input[type=url]:focus{outline:2px solid var(--rust);outline-offset:1px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:16px;cursor:pointer}
+.consent input{width:20px;height:20px;margin-top:3px;accent-color:var(--rust)}
+.err{color:var(--rust);font:500 14px var(--mono);margin:8px 0 0;min-height:1em}
+.linkish{background:none;border:0;padding:0;font:inherit;color:var(--mute);text-decoration:underline;cursor:pointer;min-height:44px}
 </style>
 </head>
 <body>
@@ -212,7 +221,7 @@ function board(){
 function render(){
   board();
   if(i<0){
-    panel.innerHTML=`<p class="lvl">How this works</p><h2>Find your voice by playing</h2><p class="sub">Your voice is who you are, and it stays the same. Your tone is how you sound in a given moment, and it shifts. You'll set both in six moves.</p>
+    panel.innerHTML=`${INTAKE.first?`<p class="lvl">Prepared for ${esc(INTAKE.first)}</p>`:'<p class="lvl">How this works</p>'}<h2>Find your voice by playing</h2><p class="sub">Your voice is who you are, and it stays the same. Your tone is how you sound in a given moment, and it shifts. You'll set both in six moves.</p>
     <ol class="howto"><li><span>Each level teaches one piece of a voice guide in a short lesson.</span></li><li><span>Write your message, then watch it travel through six channels: The Canon, Long-form, Newsletter, Video, Live and Social.</span></li><li><span>Keep the "Meaning kept" meter full. At the end you get your voice card to keep.</span></li></ol>
     <aside class="lesson"><h3>Why it matters</h3><p>In Nielsen Norman Group's research, people shown two versions of the same website, identical except for the tone of voice, had clear preferences between them.</p>${src('nngu')}</aside>
     <div class="row"><button class="btn" id="go" type="button">Start the workshop</button></div>`;
@@ -247,7 +256,7 @@ function render(){
     const b=B();r.parentElement.querySelectorAll('.ends span').forEach((s,n)=>s.classList.toggle('on',(n===0&&b[r.dataset.d]===0)||(n===1&&b[r.dataset.d]===2)))}));
   panel.querySelectorAll('[data-h]').forEach(b=>b.addEventListener('click',()=>{S.home=b.dataset.h;render()}));
   panel.querySelectorAll('[data-l]').forEach(b=>b.addEventListener('click',()=>{const l=b.dataset.l;S.listen=S.listen.includes(l)?S.listen.filter(x=>x!==l):[...S.listen,l];render()}));
-  $('#go').addEventListener('click',()=>{if(i<STEPS.length-1){i++;render()}else reveal()});
+  $('#go').addEventListener('click',()=>{if(i<STEPS.length-1){i++;render()}else finish()});
   const bk=$('#back');if(bk)bk.addEventListener('click',()=>{i--;render()});
 }
 const panel=$('#panel');
@@ -268,12 +277,56 @@ function reveal(){
     <div><h3>How people talk back</h3>${esc(S.listen.join(', ')||'Not picked yet')}</div>
   </div>
   <h3 class="lvl" style="margin-top:6px">What to do with this</h3><ol class="howto"><li><span>Copy your voice card and keep it next to wherever you write.</span></li><li><span>Before you publish, read the draft against your three words and your guardrails.</span></li><li><span>Write in your home base first, then reduce it for each channel. Haven't done Part 1 yet? Try <a href="https://brand.terencelatimer.com">See Your Brand</a>.</span></li></ol><div class="row"><button class="btn" id="copy" type="button">Copy my voice card</button><button class="btn ghost" id="again" type="button">Play again</button></div>
-  <p class="note" id="cmsg">Your answers stay in this browser. Nothing is sent anywhere yet.</p></div>`;
+  <p class="note" id="cmsg"></p></div>`;
   $('#again').addEventListener('click',()=>{Object.assign(S,{core:'',words:[],anti:[],dials:{F:2,E:2,H:2,R:2},home:null,listen:[]});i=-1;render()});
   $('#copy').addEventListener('click',()=>{
     const t=`Voice card\nMessage: ${core()}\nTone: ${name}\nAlways sound: ${S.words.join(', ')}\nNever sound: ${S.anti.join(', ')||'none set'}\nHome base: ${home?home.n:'not picked'}\nHow people talk back: ${S.listen.join(', ')||'not picked'}\nMeaning kept: ${fid}%`;
     navigator.clipboard.writeText(t).then(()=>$('#cmsg').textContent='Copied to your clipboard.').catch(()=>$('#cmsg').textContent='Your browser blocked copying here. Select the card text above instead.');
   });
+}
+const GAME='voice';
+function cardPairs(){const b=B(),v=violations(),fid=Math.max(0,100-v.length*25),home=REGS.find(r=>r.id===S.home);
+  return [['Message',core()],['Tone',DIMS.map(d=>d.w[b[d.k]]).join(', ')],['Always sound',S.words.join(', ')||'Not picked'],['Never sound',S.anti.join(', ')||'No guardrails'],['Crossing guardrails',v.map(x=>x.n).join(', ')||'None'],['Home base',home?home.n:'Not picked'],['How people talk back',S.listen.join(', ')||'Not picked'],['Meaning kept',fid+'%']]}
+
+/* Intake: personal links (?for=CODE) and sending the card to Terence's CRM */
+const API='https://us-west1-tle-operations.cloudfunctions.net/webhook-intake-save_answers';
+const INTAKE={code:null,first:null};
+try{const c=new URLSearchParams(location.search).get('for');
+  if(c&&/^[A-Za-z0-9_-]{6,40}$/.test(c)){INTAKE.code=c;
+    fetch(API+'?for='+encodeURIComponent(c)).then(r=>{if(r.status===404){INTAKE.code=null;return null}return r.ok?r.json():null})
+      .then(j=>{if(j&&typeof j.first==='string'){INTAKE.first=j.first;if(i<0)render()}}).catch(()=>{})}}catch(e){}
+function sendCard(contact){
+  return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({game:GAME,code:INTAKE.code,card:cardPairs(),contact:contact||null,hp:contact&&contact.hp||''})})
+    .then(r=>r.ok).catch(()=>false)}
+function status(msg){const m=$('#cmsg');if(m)m.textContent=msg}
+const SENT='Sent. Terence has your card and will follow up with ideas for your brand.';
+const FAIL="Your card couldn't be sent just now. Copy it and send it to Terence directly.";
+function finish(){
+  if(INTAKE.code){reveal();status('Sending your card to Terence…');sendCard(null).then(ok=>status(ok?SENT:FAIL));return}
+  panel.innerHTML=`<p class="lvl">Last step</p><h2>Where should I send your card?</h2>
+  <p class="sub">I'll review your answers and follow up with ideas for your brand. Your details stay private and are never sold or shared.</p>
+  <form id="cf" novalidate>
+    <div class="field"><label for="c-name">Your name *</label><input type="text" id="c-name" autocomplete="name" maxlength="120"></div>
+    <div class="field"><label for="c-email">Email *</label><input type="email" id="c-email" autocomplete="email" maxlength="200"></div>
+    <div class="field"><label for="c-phone">Phone</label><input type="tel" id="c-phone" autocomplete="tel" maxlength="40"></div>
+    <div class="field"><label for="c-biz">Business or project name</label><input type="text" id="c-biz" autocomplete="organization" maxlength="160"></div>
+    <div class="field"><label for="c-web">Website or main social link</label><input type="url" id="c-web" autocomplete="url" maxlength="200"></div>
+    <div class="hp" aria-hidden="true"><label for="c-hp">Leave this empty</label><input type="text" id="c-hp" tabindex="-1" autocomplete="off"></div>
+    <label class="consent"><input type="checkbox" id="c-ok"> <span>I agree that Terence Latimer can contact me about my brand.</span></label>
+    <p class="err" id="c-err" role="alert"></p>
+    <div class="row"><button class="btn ghost" type="button" id="c-back">Back</button><button class="btn" type="submit" id="c-go">Send my card and reveal</button></div>
+    <p class="note"><button type="button" class="linkish" id="c-skip">Show my card without sending it</button></p>
+  </form>`;
+  $('#c-back').addEventListener('click',()=>render());
+  $('#c-skip').addEventListener('click',()=>{reveal();status('Not sent. Copy your card if you want to keep it.')});
+  $('#cf').addEventListener('submit',e=>{e.preventDefault();
+    const v=id=>$(id).value.trim();
+    const c={name:v('#c-name'),email:v('#c-email'),phone:v('#c-phone'),business:v('#c-biz'),website:v('#c-web'),consent:$('#c-ok').checked,hp:v('#c-hp')};
+    const err=!c.name?'Please add your name.':!/^[^@\s]+@[^@\s]+\.[A-Za-z]{2,}$/.test(c.email)?'Please add a working email address.':!c.consent?'Please tick the box so Terence can follow up.':'';
+    if(err){$('#c-err').textContent=err;return}
+    const b=$('#c-go');b.disabled=true;b.textContent='Sending…';
+    sendCard(c).then(ok=>{reveal();status(ok?SENT:FAIL)})});
 }
 render();
 }
